@@ -8,6 +8,7 @@ const QuestionDetail = ({ question, onBack }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
+    window.scrollTo(0, 0); // Reset scroll to top
     Prism.highlightAll();
   }, [question, activeTab]);
 

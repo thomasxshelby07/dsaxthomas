@@ -9,6 +9,21 @@ import './App.css';
 function App() {
   const [selectedPatternId, setSelectedPatternId] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [solvedQuestions, setSolvedQuestions] = useState(() => {
+    const saved = localStorage.getItem('dsa_solved_questions');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  React.useEffect(() => {
+    localStorage.setItem('dsa_solved_questions', JSON.stringify(solvedQuestions));
+  }, [solvedQuestions]);
+
+  const toggleSolved = (id) => {
+    setSolvedQuestions(prev => 
+      prev.includes(id) ? prev.filter(qId => qId !== id) : [...prev, id]
+    );
+  };
 
   const selectedPattern = patternsData.find(p => p.id === selectedPatternId);
 
@@ -16,15 +31,26 @@ function App() {
   const handlePatternSelect = (id) => {
     setSelectedPatternId(id);
     setSelectedQuestion(null);
+    setIsSidebarOpen(false); // Close sidebar on selection
   };
 
   return (
-    <div className={`app-layout ${selectedPattern ? 'pattern-active' : ''}`}>
+    <div className={`app-layout ${selectedPattern ? 'pattern-active' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+      <div className="mobile-header">
+        <button className="menu-btn" onClick={() => setIsSidebarOpen(true)}>
+          <span className="icon">☰</span>
+        </button>
+        <h1 className="mobile-logo">DSA Mastery</h1>
+      </div>
+
       <Sidebar 
         patterns={patternsData} 
         selectedId={selectedPatternId} 
-        onSelect={handlePatternSelect} 
+        onSelect={handlePatternSelect}
+        onClose={() => setIsSidebarOpen(false)}
       />
+
+      {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
       
       <div className="main-content">
         {selectedPattern && !selectedQuestion && (
@@ -53,7 +79,9 @@ function App() {
           <main className="patterns-container">
             <PatternCard 
               pattern={selectedPattern} 
-              onSelectQuestion={setSelectedQuestion} 
+              onSelectQuestion={setSelectedQuestion}
+              solvedQuestions={solvedQuestions}
+              onToggleSolved={toggleSolved}
             />
           </main>
         )}

@@ -196,3 +196,34 @@
     justify-content: flex-end;
   }
 }
+
+@media (max-width: 768px) {
+  .hero-container {
+    padding: 3rem 1.5rem;
+  }
+  .hero-title {
+    font-size: 2rem;
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+    padding: 0 1rem;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .stat-box {
+    padding: 1rem 0.5rem;
+    min-width: unset;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  .stat-label {
+    font-size: 0.65rem;
+  }
+  .hero-meta {
+    gap: 1rem;
+  }
+}

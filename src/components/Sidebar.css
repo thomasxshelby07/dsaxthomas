@@ -11,6 +11,23 @@
   z-index: 100;
 }
 
+.sidebar-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-close-btn:hover {
+  color: var(--text-primary);
+}
+
 .sidebar-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--border);
@@ -91,6 +108,10 @@
 .pattern-btn.active .pattern-num {
   color: var(--blue);
   opacity: 0.8;
+}
+
+.pattern-name {
+  flex: 1;
 }
 
 .sidebar-footer {

@@ -743,16 +743,403 @@ export const patternsData = [
       { trigger: "Exact sum = k", pattern: "Prefix Sum + HashMap" }
     ],
     questions: [
-      { isMastery: true, difficulty: "E", name: "Maximum Average Subarray I", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/maximum-average-subarray-i/" },
-      { isMastery: true, difficulty: "E", name: "Defuse the Bomb", companies: ["Amazon"], link: "https://leetcode.com/problems/defuse-the-bomb/" },
-      { isMastery: true, difficulty: "E", name: "Minimum Recolors to Get K Consecutive Black Blocks", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/minimum-recolors-to-get-k-consecutive-black-blocks/" },
-      { isMastery: true, difficulty: "E", name: "Find the K-Beauty of a Number", companies: ["Amazon"], link: "https://leetcode.com/problems/find-the-k-beauty-of-a-number/" },
-      { isMastery: true, difficulty: "E", name: "Diet Plan Performance", companies: ["Amazon"], link: "https://leetcode.com/problems/diet-plan-performance/" },
-      { isMastery: true, difficulty: "E", name: "Longest Nice Substring", companies: ["Microsoft"], link: "https://leetcode.com/problems/longest-nice-substring/" },
-      { isMastery: true, difficulty: "E", name: "Count Vowel Substrings of a String", companies: ["Amazon"], link: "https://leetcode.com/problems/count-vowel-substrings-of-a-string/" },
-      { isMastery: true, difficulty: "E", name: "K Radius Subarray Averages", companies: ["Amazon"], link: "https://leetcode.com/problems/k-radius-subarray-averages/" },
-      { isMastery: true, difficulty: "E", name: "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold", companies: ["Amazon"], link: "https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/" },
-      { isMastery: true, difficulty: "E", name: "Longest Substring of All Vowels in Order", companies: ["Google"], link: "https://leetcode.com/problems/longest-substring-of-all-vowels-in-order/" },
+      { 
+        isMastery: true, 
+        id: "m_max_avg_sub",
+        difficulty: "E", 
+        name: "Maximum Average Subarray I", 
+        companies: ["Amazon", "Google"], 
+        link: "https://leetcode.com/problems/maximum-average-subarray-i/",
+        problemStatement: "You are given an integer array `nums` consisting of `n` elements, and an integer `k`.\nFind a contiguous subarray whose length is equal to `k` that has the maximum average value and return this value.",
+        testCases: [
+          { input: "nums = [1,12,-5,-6,50,3], k = 4", output: "12.75000", explanation: "Maximum average is (12 - 5 - 6 + 50) / 4 = 51 / 4 = 12.75" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Fixed Window)",
+            concept: "Hum `k` size ki **Fixed Window** banayenge. Pehle pehli window ka sum nikalenge, fir window ko aage shift karte waqt agla element add aur pichla element remove karenge. Isse har window ka sum **O(1)** mein mil jayega.",
+            code: `def findMaxAverage(nums, k):
+    # Pehli window ka sum
+    curr_sum = sum(nums[:k])
+    max_sum = curr_sum
+    
+    # Window ko aage shift karo
+    for i in range(k, len(nums)):
+        curr_sum += nums[i] - nums[i-k]
+        max_sum = max(max_sum, curr_sum)
+        
+    return max_sum / k`,
+            dryRun: [
+              "[STATE] nums=[1,12,-5,-6,50,3], k=4, curr_sum=2 [DESC] Pehli window [1,12,-5,-6] ka sum = 2.",
+              "[STATE] i=4, next_val=50, prev_val=1 [DESC] Window shift: 2 + 50 - 1 = 51. max_sum update to 51.",
+              "[STATE] i=5, next_val=3, prev_val=12 [DESC] Window shift: 51 + 3 - 12 = 42. Final max_avg = 51/4 = 12.75."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Fixed size window mein hamesha `sum += new_element - old_element` wala logic use karein.\nAverage ki jagah Sum par compare karna safer hota hai floating point errors se bachne ke liye."
+      },
+      { 
+        isMastery: true, 
+        id: "m_defuse_bomb",
+        difficulty: "E", 
+        name: "Defuse the Bomb", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/defuse-the-bomb/",
+        problemStatement: "You have a bomb to defuse, and its code is a circular array `code` of length `n`.\nIf `k > 0`, replace the i-th number with the sum of the next `k` numbers.\nIf `k < 0`, replace the i-th number with the sum of the previous `|k|` numbers.\nIf `k == 0`, replace the i-th number with 0.",
+        testCases: [
+          { input: "code = [5,7,1,4], k = 3", output: "[12,10,16,13]" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Sliding Window)",
+            concept: "Kyunki array **circular** hai, hum array ko double kar sakte hain ya modulo operator use kar sakte hain. Hum ek fixed window ka sum maintain karenge aur use move karenge.",
+            code: `def decrypt(code, k):
+    n = len(code)
+    if k == 0: return [0] * n
+    
+    res = [0] * n
+    # Define window range based on k
+    l, r = (1, k) if k > 0 else (n + k, n - 1)
+    
+    # Initial window sum
+    curr_sum = 0
+    for i in range(l, r + 1):
+        curr_sum += code[i % n]
+        
+    for i in range(n):
+        res[i] = curr_sum
+        # Slide window
+        curr_sum -= code[l % n]
+        l += 1
+        r += 1
+        curr_sum += code[r % n]
+        
+    return res`,
+            dryRun: [
+              "[STATE] code=[5,7,1,4], k=3, l=1, r=3, curr_sum=12 [DESC] Initial window [7,1,4] sum = 12. res[0]=12.",
+              "[STATE] i=0 -> Slide: 12 - code[1] + code[4%4=0] = 12 - 7 + 5 = 10. res[1]=10.",
+              "[STATE] i=1 -> Slide: 10 - code[2] + code[5%4=1] = 10 - 1 + 7 = 16. res[2]=16."
+            ],
+            complexity: "Time: O(N), Space: O(N) for result"
+          }
+        ],
+        importantNotes: "Circular array handling ke liye `% n` (modulo) best tool hai.\nWindow range correctly decide karna (l, r) iska main part hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_min_recolors",
+        difficulty: "E", 
+        name: "Minimum Recolors to Get K Consecutive Black Blocks", 
+        companies: ["Amazon", "Google"], 
+        link: "https://leetcode.com/problems/minimum-recolors-to-get-k-consecutive-black-blocks/",
+        problemStatement: "You are given a 0-indexed string `blocks` of length `n`, where `blocks[i]` is either 'W' (white) or 'B' (black). You are also given an integer `k`.\nReturn the minimum number of white blocks that need to be recolored to black so that there are at least `k` consecutive black blocks.",
+        testCases: [
+          { input: 'blocks = "WBBWWBBWBW", k = 7', output: "3", explanation: "One way is to color indices 0, 3, and 4 to Black." }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Fixed Window)",
+            concept: "Humein `k` length ki aisi window dhundni hai jisme **White (W)** blocks minimum hon. Hum sliding window se har possible window ke 'W' count karenge.",
+            code: `def minimumRecolors(blocks, k):
+    # Initial window of size k
+    curr_w = blocks[:k].count('W')
+    min_w = curr_w
+    
+    for i in range(k, len(blocks)):
+        # Slide window
+        if blocks[i] == 'W': curr_w += 1
+        if blocks[i-k] == 'W': curr_w -= 1
+        min_w = min(min_w, curr_w)
+        
+    return min_w`,
+            dryRun: [
+              "[STATE] blocks='WBBWWBB...', k=7, curr_w=3 [DESC] First 7 chars [WBBWWBB] contain 3 'W's. min_w=3.",
+              "[STATE] i=7, new='B', old='W' [DESC] Slide: next char 'B' (no change), old char 'W' (removed). curr_w = 3 - 1 = 2.",
+              "[STATE] i=8, new='W', old='B' [DESC] Slide: next char 'W' (added), old char 'B' (no change). curr_w = 2 + 1 = 3."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Sliding window se hum range queries ko optimize karte hain.\nCounting problems mein update sirf tab karein jab incoming/outgoing element relevant ho."
+      },
+      { 
+        isMastery: true, 
+        id: "m_k_beauty",
+        difficulty: "E", 
+        name: "Find the K-Beauty of a Number", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/find-the-k-beauty-of-a-number/",
+        problemStatement: "The k-beauty of a number `num` is the number of substrings of `num` when it is read as a string that meet the following conditions:\n1. It has length `k`.\n2. It is a divisor of `num`.",
+        testCases: [
+          { input: "num = 240, k = 2", output: "2", explanation: "Substrings are '24', '40'. Both divide 240." }
+        ],
+        solutions: [
+          {
+            type: "String Sliding Window",
+            concept: "Pehle number ko string mein convert karenge. Phir `k` size ki sliding window se har substring nikalenge aur check karenge ki woh number ko divide karta hai ya nahi.",
+            code: `def divisorSubstrings(num, k):
+    s = str(num)
+    count = 0
+    
+    for i in range(len(s) - k + 1):
+        # Extract k-length substring
+        sub = int(s[i : i+k])
+        if sub != 0 and num % sub == 0:
+            count += 1
+            
+    return count`,
+            dryRun: [
+              "[STATE] num=240, k=2, s='240' [DESC] i=0: substring '24'. 240 % 24 == 0. count = 1.",
+              "[STATE] i=1: substring '40'. 240 % 40 == 0. count = 2.",
+              "[STATE] Done. Result = 2."
+            ],
+            complexity: "Time: O(N), Space: O(N) to store string"
+          }
+        ],
+        importantNotes: "Number manipulation mein string conversion kabhi kabhi simplest solution hota hai.\n**Divide by Zero** case ka humesha dhyan rakhein (`sub != 0`)."
+      },
+      { 
+        isMastery: true, 
+        id: "m_diet_plan",
+        difficulty: "E", 
+        name: "Diet Plan Performance", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/diet-plan-performance/",
+        problemStatement: "A dieter consumes `calories[i]` calories on the i-th day. Given `k` (consecutive days), they calculate total calories `T` for every window of `k` days.\nScore +1 if `T > upper`, Score -1 if `T < lower`, else 0.",
+        testCases: [
+          { input: "calories = [1,2,3,4,5], k = 1, lower = 3, upper = 3", output: "0" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Fixed Window)",
+            concept: "Fixed size `k` window ka sum maintain karenge. Har window ke khatam hone par score calculate karenge aur window ko slide karenge.",
+            code: `def dietPlanPerformance(calories, k, lower, upper):
+    curr_sum = sum(calories[:k])
+    score = 0
+    
+    def get_score(s):
+        if s < lower: return -1
+        if s > upper: return 1
+        return 0
+        
+    score += get_score(curr_sum)
+    
+    for i in range(k, len(calories)):
+        curr_sum += calories[i] - calories[i-k]
+        score += get_score(curr_sum)
+        
+    return score`,
+            dryRun: [
+              "[STATE] cal=[1,2,3...], k=1, lower=3, upper=3 [DESC] Window size 1. Day 1 sum=1. 1 < 3, score = -1.",
+              "[STATE] i=1, val=2 [DESC] New window sum=2. 2 < 3, score = -1 + (-1) = -2.",
+              "[STATE] i=2, val=3 [DESC] New window sum=3. 3 matches range, score = -2 + 0 = -2."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Sliding window ka generic structure same rehta hai: initial window + loop to shift.\nLogic simplified rakhne ke liye helper function (`get_score`) use karein."
+      },
+      { 
+        isMastery: true, 
+        id: "m_longest_nice",
+        difficulty: "E", 
+        name: "Longest Nice Substring", 
+        companies: ["Microsoft"], 
+        link: "https://leetcode.com/problems/longest-nice-substring/",
+        problemStatement: "A string `s` is nice if, for every letter of the alphabet that `s` contains, it appears both in uppercase and lowercase.\nReturn the longest nice substring of `s`.",
+        testCases: [
+          { input: 's = "YazaAay"', output: '"aAa"' }
+        ],
+        solutions: [
+          {
+            type: "Divide & Conquer (Sliding Window Variant)",
+            concept: "Hum poori string ko check karenge. Agar koi aisa character milta hai jiska uppercase ya lowercase missing hai, toh woh character kisi bhi 'nice' substring ka part nahi ho sakta. Hum string ko us point par split karke dono sides check karenge.",
+            code: `def longestNiceSubstring(s):
+    if len(s) < 2: return ""
+    
+    char_set = set(s)
+    for i, c in enumerate(s):
+        if c.swapcase() not in char_set:
+            # s[i] is a bad character
+            s1 = longestNiceSubstring(s[:i])
+            s2 = longestNiceSubstring(s[i+1:])
+            return s1 if len(s1) >= len(s2) else s2
+            
+    return s`,
+            dryRun: [
+              "[STATE] s='YazaAay', char_set={Y,a,z,A,y} [DESC] 'Y' (idx 0) ka lowercase 'y' set mein hai. 'a' (idx 1) ka 'A' bhi hai. 'z' (idx 2) ka 'Z' missing hai!",
+              "[STATE] Split at 'z': s1='Ya', s2='aAay' [DESC] 'Ya' is not nice. 'aAay' split again at 'y' because 'Y' is missing in this substring.",
+              "[STATE] Result = 'aAa' [DESC] Longest found nice substring."
+            ],
+            complexity: "Time: O(N^2) in worst case, Space: O(N) for recursion"
+          }
+        ],
+        importantNotes: "Kuch problems Sliding Window se zyada Divide & Conquer se solve hoti hain jab condition 'poore window' par depend kare.\n`swapcase()` function check karne ke liye bahut handy hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_count_vowels",
+        difficulty: "E", 
+        name: "Count Vowel Substrings of a String", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/count-vowel-substrings-of-a-string/",
+        problemStatement: "A vowel substring is a substring that only consists of vowels ('a', 'e', 'i', 'o', and 'u') and has at least one of each vowel.",
+        testCases: [
+          { input: 's = "aeiouu"', output: "2", explanation: '"aeiou" and "aeiouu" are both vowel substrings.' }
+        ],
+        solutions: [
+          {
+            type: "Brute Force (Sliding Window)",
+            concept: "Choti constraints (N=100) ki wajah se hum har possible substring check kar sakte hain. Substring sirf vowels ki honi chahiye aur usme saare 5 vowels hone chahiye.",
+            code: `def countVowelSubstrings(s):
+    count = 0
+    vowels = set("aeiou")
+    n = len(s)
+    
+    for i in range(n):
+        curr_set = set()
+        for j in range(i, n):
+            if s[j] not in vowels:
+                break
+            curr_set.add(s[j])
+            if len(curr_set) == 5:
+                count += 1
+                
+    return count`,
+            dryRun: [
+              "[STATE] s='aeiouu', i=0 [DESC] Substrings starting at 0: 'aeiou' (valid), 'aeiouu' (valid). count = 2.",
+              "[STATE] i=1 [DESC] 'eiouu' (only 4 distinct vowels). invalid.",
+              "[STATE] Done. Total = 2."
+            ],
+            complexity: "Time: O(N^2), Space: O(1)"
+          }
+        ],
+        importantNotes: "Jab problem mein 'at least one of each' ho, toh `set()` ka size use karein.\nSliding window optimization (O(N)) iska complex hai, but N=100 ke liye O(N^2) is perfectly fine."
+      },
+      { 
+        isMastery: true, 
+        id: "m_k_radius",
+        difficulty: "E", 
+        name: "K Radius Subarray Averages", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/k-radius-subarray-averages/",
+        problemStatement: "You are given a 0-indexed array `nums` and an integer `k`.\nThe k-radius average for index `i` is the average of all elements in `nums` between `i-k` and `i+k` (inclusive). If there are less than `k` elements before or after `i`, the average is -1.",
+        testCases: [
+          { input: "nums = [7,4,3,9,1,8,5,2,6], k = 3", output: "[-1,-1,-1,5,4,4,-1,-1,-1]" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Sliding Window)",
+            concept: "Window size hamesha `2*k + 1` hogi. Hum window sum maintain karenge aur result index `i` (jo window ka center hai) par average store karenge.",
+            code: `def getAverages(nums, k):
+    n = len(nums)
+    res = [-1] * n
+    window_size = 2 * k + 1
+    
+    if n < window_size: return res
+    
+    curr_sum = sum(nums[:window_size])
+    for i in range(k, n - k):
+        res[i] = curr_sum // window_size
+        # Slide window if not at end
+        if i + k + 1 < n:
+            curr_sum += nums[i + k + 1] - nums[i - k]
+            
+    return res`,
+            dryRun: [
+              "[STATE] n=9, k=3, window=7 [DESC] Pehli window [7,4,3,9,1,8,5] sum=37. res[3]=37//7 = 5.",
+              "[STATE] Slide: 37 - nums[0] + nums[7] = 37 - 7 + 2 = 32. res[4]=32//7 = 4.",
+              "[STATE] Final result: [-1, -1, -1, 5, 4, 4, -1, -1, -1]."
+            ],
+            complexity: "Time: O(N), Space: O(N) for result"
+          }
+        ],
+        importantNotes: "Window center logic mein range hamesha `[i-k, i+k]` hoti hai.\nInteger division (`//`) ensure karta hai floor average."
+      },
+      { 
+        isMastery: true, 
+        id: "m_sub_threshold",
+        difficulty: "E", 
+        name: "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/",
+        problemStatement: "Given an array of integers `arr` and two integers `k` and `threshold`, return the number of sub-arrays of size `k` and average greater than or equal to `threshold`.",
+        testCases: [
+          { input: "arr = [2,2,2,2,5,5,5,8], k = 3, threshold = 4", output: "3" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Sliding Window)",
+            concept: "Average calculation ke liye hum target sum nikal lenge: `target_sum = k * threshold`. Phir sliding window se har window ka sum check karenge.",
+            code: `def numOfSubarrays(arr, k, threshold):
+    target_sum = k * threshold
+    curr_sum = sum(arr[:k])
+    count = 0
+    
+    if curr_sum >= target_sum: count += 1
+    
+    for i in range(k, len(arr)):
+        curr_sum += arr[i] - arr[i-k]
+        if curr_sum >= target_sum:
+            count += 1
+            
+    return count`,
+            dryRun: [
+              "[STATE] k=3, threshold=4, target=12 [DESC] Window 1 [2,2,2] sum=6 (<12). count=0.",
+              "[STATE] Slide to [2,5,5] sum=12 (>=12). count=1.",
+              "[STATE] Slide to [5,5,5] sum=15 (>=12). count=2."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Hamesha average ki jagah multiplication logic use karein (`sum >= k * threshold`) taaki division se bach sakein.\nFixed size window optimization hamesha O(N) hoti hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_vowels_order",
+        difficulty: "E", 
+        name: "Longest Substring of All Vowels in Order", 
+        companies: ["Google"], 
+        link: "https://leetcode.com/problems/longest-substring-of-all-vowels-in-order/",
+        problemStatement: "A string is considered beautiful if it only consists of vowels and all five vowels appear in order: 'a' < 'e' < 'i' < 'o' < 'u'.\nReturn the length of the longest beautiful substring.",
+        testCases: [
+          { input: 'word = "aeiauoaeiouuuaeiou"', output: "13" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Sliding Window)",
+            concept: "Hum string ko scan karenge. Agar current char pichle se bada ya barabar hai, toh beautiful sequence continue hai. Agar nahi, toh sequence break ho gayi. Hum count karenge kitne unique vowels mile.",
+            code: `def longestBeautifulSubstring(word):
+    ans = 0
+    n = len(word)
+    i = 0
+    while i < n:
+        if word[i] == 'a':
+            curr_len = 1
+            unique_count = 1
+            j = i + 1
+            while j < n and word[j] >= word[j-1]:
+                if word[j] > word[j-1]:
+                    unique_count += 1
+                curr_len += 1
+                j += 1
+            if unique_count == 5:
+                ans = max(ans, curr_len)
+            i = j
+        else:
+            i += 1
+    return ans`,
+            dryRun: [
+              "[STATE] word='aeiauo...', i=0 [DESC] starts with 'a'. j moves to 'e', 'i', then 'a' breaks it. unique=3. invalid.",
+              "[STATE] word='...aeiouuu...', i=6 [DESC] starts with 'a'. j moves through all vowels in order. unique=5. len=13.",
+              "[STATE] Done. ans=13."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Sequence order problems mein condition `word[j] >= word[j-1]` bahut useful hoti hai.\nSirf 'a' se start hone wali strings hi beautiful ho sakti hain."
+      },
       { difficulty: "M", name: "Longest Substring Without Repeating Chars", companies: ["Amazon", "Google", "Meta", "Microsoft"] },
       { difficulty: "H", name: "Minimum Window Substring", companies: ["Amazon", "Google", "Meta", "Microsoft"] },
       { difficulty: "H", name: "Sliding Window Maximum", companies: ["Amazon", "Google", "Microsoft"] },
@@ -812,27 +1199,357 @@ export const patternsData = [
       { trigger: "2D range sum query", pattern: "2D Prefix Sum" }
     ],
     questions: [
-      { isMastery: true, difficulty: "E", name: "Running Sum of 1D Array", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/running-sum-of-1d-array/" },
-      { isMastery: true, difficulty: "E", name: "Find Pivot Index", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/find-pivot-index/" },
-      { isMastery: true, difficulty: "E", name: "Find the Middle Index in Array", companies: ["Amazon"], link: "https://leetcode.com/problems/find-the-middle-index-in-array/" },
-      { isMastery: true, difficulty: "E", name: "Range Sum Query - Immutable", companies: ["Amazon", "Adobe"], link: "https://leetcode.com/problems/range-sum-query-immutable/" },
-      { isMastery: true, difficulty: "E", name: "Minimum Value to Get Positive Step-by-Step Sum", companies: ["Google"], link: "https://leetcode.com/problems/minimum-value-to-get-positive-step-by-step-sum/" },
-      { isMastery: true, difficulty: "E", name: "Left and Right Sum Differences", companies: ["Amazon"], link: "https://leetcode.com/problems/left-and-right-sum-differences/" },
-      { isMastery: true, difficulty: "E", name: "Find the Highest Altitude", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/find-the-highest-altitude/" },
-      { isMastery: true, difficulty: "E", name: "Shifting Letters", companies: ["Amazon"], link: "https://leetcode.com/problems/shifting-letters/" },
-      { isMastery: true, difficulty: "E", name: "Check if Array Is Sorted and Rotated", companies: ["Amazon"], link: "https://leetcode.com/problems/check-if-array-is-sorted-and-rotated/" },
-      { isMastery: true, difficulty: "E", name: "Maximum Score After Splitting a String", companies: ["Amazon"], link: "https://leetcode.com/problems/maximum-score-after-splitting-a-string/" },
-      { difficulty: "M", name: "Maximum Subarray (Kadane's)", companies: ["Amazon", "Google", "Microsoft", "Meta"] },
-      { difficulty: "M", name: "Subarray Sum Equals K", companies: ["Amazon", "Google", "Meta", "Bloomberg"] },
-      { difficulty: "M", name: "Maximum Product Subarray", companies: ["Amazon", "Google", "Microsoft"] },
-      { difficulty: "E", name: "Range Sum Query — Immutable", companies: ["Amazon", "Adobe"] },
-      { difficulty: "M", name: "Contiguous Array (0s and 1s)", companies: ["Meta", "Amazon", "Google"] },
-      { difficulty: "M", name: "Subarray Sum Divisible by K", companies: ["Amazon", "Google", "Bloomberg"] },
-      { difficulty: "H", name: "Maximum Sum Circular Subarray", companies: ["Amazon", "Google"] },
-      { difficulty: "M", name: "Count Subarrays with XOR = k", companies: ["Amazon", "Flipkart"] },
-      { difficulty: "M", name: "Longest Subarray with Sum 0", companies: ["Amazon", "Paytm", "Flipkart"] },
-      { difficulty: "M", name: "Product of Array Except Self", companies: ["Amazon", "Google", "Meta", "Microsoft"] },
-      { difficulty: "H", name: "Max Subarray Min Product", companies: ["Amazon"] },
+      { 
+        isMastery: true, 
+        id: "m_running_sum",
+        difficulty: "E", 
+        name: "Running Sum of 1d Array", 
+        companies: ["Google", "Amazon", "Apple"], 
+        link: "https://leetcode.com/problems/running-sum-of-1d-array/",
+        problemStatement: "Given an array `nums`. We define a running sum of an array as `runningSum[i] = sum(nums[0]…nums[i])`.\nReturn the running sum of `nums`.",
+        testCases: [
+          { input: "nums = [1,2,3,4]", output: "[1,3,6,10]" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Prefix Sum)",
+            concept: "Hum array ko traverse karenge aur har element mein pichle element ka sum add karte jayenge. `nums[i] = nums[i] + nums[i-1]`.",
+            code: `def runningSum(nums):
+    for i in range(1, len(nums)):
+        nums[i] += nums[i-1]
+    return nums`,
+            dryRun: [
+              "[STATE] nums=[1,2,3,4] [DESC] i=1: nums[1] = 2 + 1 = 3. nums=[1,3,3,4].",
+              "[STATE] i=2: nums[2] = 3 + 3 = 6. nums=[1,3,6,4].",
+              "[STATE] i=3: nums[3] = 4 + 6 = 10. nums=[1,3,6,10]."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Prefix sum basic build block hai range sum problems ke liye.\nIn-place modification space save karti hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_pivot_index",
+        difficulty: "E", 
+        name: "Find Pivot Index", 
+        companies: ["Amazon", "Google", "Facebook"], 
+        link: "https://leetcode.com/problems/find-pivot-index/",
+        problemStatement: "The pivot index is the index where the sum of all the numbers strictly to the left of the index is equal to the sum of all the numbers strictly to the index's right.",
+        testCases: [
+          { input: "nums = [1,7,3,6,5,6]", output: "3" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Prefix Sum)",
+            concept: "Pehle total sum nikal lo. Phir left_sum maintain karo. Har index `i` par check karo: `left_sum == (total_sum - left_sum - nums[i])`. Agar barabar hai toh `i` pivot hai.",
+            code: `def pivotIndex(nums):
+    total = sum(nums)
+    left_sum = 0
+    for i, x in enumerate(nums):
+        if left_sum == (total - left_sum - x):
+            return i
+        left_sum += x
+    return -1`,
+            dryRun: [
+              "[STATE] total=28, left=0 [DESC] i=0: 0 == (28-0-1) False. left=1.",
+              "[STATE] i=3 (x=6): left=11. 11 == (28-11-6) => 11 == 11. True. Return 3."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Left side ka sum pata hai, toh right side automatically `total - left - current` hota hai.\nEdge cases: index 0 and last index."
+      },
+      { 
+        isMastery: true, 
+        id: "m_kadanes",
+        difficulty: "M", 
+        name: "Maximum Subarray (Kadane's Algorithm)", 
+        companies: ["Amazon", "Google", "Meta", "Microsoft"], 
+        link: "https://leetcode.com/problems/maximum-subarray/",
+        problemStatement: "Given an integer array `nums`, find the subarray with the largest sum and return its sum.",
+        testCases: [
+          { input: "nums = [-2,1,-3,4,-1,2,1,-5,4]", output: "6" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Kadane's)",
+            concept: "Hum har point par decide karenge: kya purana sum continue karein ya naya start karein? `curr_sum = max(nums[i], curr_sum + nums[i])`. Isse hum local maximum track karte hain.",
+            code: `def maxSubArray(nums):
+    max_sum = curr_sum = nums[0]
+    for i in range(1, len(nums)):
+        curr_sum = max(nums[i], curr_sum + nums[i])
+        max_sum = max(max_sum, curr_sum)
+    return max_sum`,
+            dryRun: [
+              "[STATE] nums=[-2,1,-3,4...], max=-2, curr=-2 [DESC] i=1 (x=1): curr = max(1, -2+1) = 1. max=1.",
+              "[STATE] i=2 (x=-3): curr = max(-3, 1-3) = -2. max=1.",
+              "[STATE] i=3 (x=4): curr = max(4, -2+4) = 4. max=4."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Agar `curr_sum` negative ho jaye, toh naya subarray start karna hi behtar hai.\nYe algorithm array mein kam se kam ek number mangta hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_subarray_sum_k",
+        difficulty: "M", 
+        name: "Subarray Sum Equals K", 
+        companies: ["Google", "Amazon", "Meta"], 
+        link: "https://leetcode.com/problems/subarray-sum-equals-k/",
+        problemStatement: "Given an array of integers `nums` and an integer `k`, return the total number of subarrays whose sum equals to `k`.",
+        testCases: [
+          { input: "nums = [1,1,1], k = 2", output: "2" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Prefix Sum + HashMap)",
+            concept: "Hum running sum track karenge. Agar `curr_sum - k` pehle kabhi dekha gaya hai, iska matlab us point se ab tak ka sum `k` hai. HashMap mein frequency store karenge.",
+            code: `def subarraySum(nums, k):
+    count = 0
+    curr_sum = 0
+    sums_map = {0: 1} # Base case
+    
+    for x in nums:
+        curr_sum += x
+        if curr_sum - k in sums_map:
+            count += sums_map[curr_sum - k]
+        sums_map[curr_sum] = sums_map.get(curr_sum, 0) + 1
+        
+    return count`,
+            dryRun: [
+              "[STATE] nums=[1,1,1], k=2, map={0:1} [DESC] x=1: curr=1. 1-2=-1 not in map. map={0:1, 1:1}.",
+              "[STATE] x=1: curr=2. 2-2=0 in map (val=1). count=1. map={0:1, 1:1, 2:1}.",
+              "[STATE] x=1: curr=3. 3-2=1 in map (val=1). count=2. map={0:1, 1:1, 2:1, 3:1}."
+            ],
+            complexity: "Time: O(N), Space: O(N)"
+          }
+        ],
+        importantNotes: "HashMap mein `{0: 1}` dalna mat bhulna, ye tab kaam aata hai jab pure prefix ka sum `k` ho.\nNegative numbers hone par sliding window fail ho jata hai, isliye Prefix Sum best hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_range_sum",
+        difficulty: "E", 
+        name: "Range Sum Query - Immutable", 
+        companies: ["Facebook", "Amazon"], 
+        link: "https://leetcode.com/problems/range-sum-query-immutable/",
+        problemStatement: "Given an integer array `nums`, handle multiple queries of the sum of elements between indices `left` and `right` inclusive.",
+        testCases: [
+          { input: "nums = [-2, 0, 3, -5, 2, -1], sumRange(0, 2)", output: "1" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Prefix Sum)",
+            concept: "Constructor mein hi prefix sum calculate kar lo. Kisi bhi range `[L, R]` ka sum `prefix[R+1] - prefix[L]` se O(1) mein mil jayega.",
+            code: `class NumArray:
+    def __init__(self, nums):
+        self.prefix = [0] * (len(nums) + 1)
+        for i in range(len(nums)):
+            self.prefix[i+1] = self.prefix[i] + nums[i]
+
+    def sumRange(self, left, right):
+        return self.prefix[right+1] - self.prefix[left]`,
+            dryRun: [
+              "[STATE] nums=[-2, 0, 3], prefix=[0, -2, -2, 1] [DESC] query(0,2): prefix[3] - prefix[0] = 1 - 0 = 1.",
+              "[STATE] query(1,2): prefix[3] - prefix[1] = 1 - (-2) = 3."
+            ],
+            complexity: "Init: O(N), Query: O(1), Space: O(N)"
+          }
+        ],
+        importantNotes: "Padding (0 at index 0) use karne se boundary conditions handle karna aasan ho jata hai.\nMultiple queries ke liye humesha pre-computation behtar hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_product_subarray",
+        difficulty: "M", 
+        name: "Maximum Product Subarray", 
+        companies: ["Amazon", "Google", "Microsoft"], 
+        link: "https://leetcode.com/problems/maximum-product-subarray/",
+        problemStatement: "Given an integer array `nums`, find a subarray that has the largest product, and return the product.",
+        testCases: [
+          { input: "nums = [2,3,-2,4]", output: "6" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Min-Max Kadane's)",
+            concept: "Products mein negative number milne se min value max ban sakti hai. Isliye hum har step par `max_so_far` aur `min_so_far` dono track karenge.",
+            code: `def maxProduct(nums):
+    res = max(nums)
+    curr_min = curr_max = 1
+    
+    for x in nums:
+        if x == 0:
+            curr_min = curr_max = 1
+            continue
+        tmp = curr_max * x
+        curr_max = max(tmp, curr_min * x, x)
+        curr_min = min(tmp, curr_min * x, x)
+        res = max(res, curr_max)
+        
+    return res`,
+            dryRun: [
+              "[STATE] nums=[2,3,-2,4] [DESC] x=2: max=2, min=2, res=2.",
+              "[STATE] x=3: max=6, min=3, res=6.",
+              "[STATE] x=-2: tmp=6*-2=-12. max=max(-12, -4, -2)=-2. min=min(-12, -4, -2)=-12. res=6."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "0 encounter hone par product reset karna padta hai.\nNegative numbers ke swap potential ke liye `curr_min` zaroori hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_cont_subarray_sum",
+        difficulty: "M", 
+        name: "Continuous Subarray Sum", 
+        companies: ["Facebook", "Amazon"], 
+        link: "https://leetcode.com/problems/continuous-subarray-sum/",
+        problemStatement: "Given an integer array `nums` and an integer `k`, return `true` if `nums` has a continuous subarray of size at least two whose elements sum up to a multiple of `k`.",
+        testCases: [
+          { input: "nums = [23,2,4,6,7], k = 6", output: "true" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Prefix Remainder)",
+            concept: "Hum prefix sum ka remainder store karenge (`sum % k`). Agar wahi remainder pehle mil chuka hai aur distance >= 2 hai, matlab beech ka sum `k` ka multiple hai.",
+            code: `def checkSubarraySum(nums, k):
+    rem_map = {0: -1}
+    curr_sum = 0
+    
+    for i, x in enumerate(nums):
+        curr_sum += x
+        rem = curr_sum % k
+        if rem in rem_map:
+            if i - rem_map[rem] >= 2:
+                return True
+        else:
+            rem_map[rem] = i
+            
+    return False`,
+            dryRun: [
+              "[STATE] nums=[23,2,4...], k=6, map={0:-1} [DESC] i=0 (23): rem=23%6=5. map={0:-1, 5:0}.",
+              "[STATE] i=1 (2): curr=25, rem=25%6=1. map={0:-1, 5:0, 1:1}.",
+              "[STATE] i=2 (4): curr=29, rem=29%6=5. 5 in map! i-map[5] = 2-0=2 (>=2). Return True."
+            ],
+            complexity: "Time: O(N), Space: O(N)"
+          }
+        ],
+        importantNotes: "Remainder logic: `(a - b) % k == 0` implies `a % k == b % k`.\nSize 2 constraint ke liye index store karna padta hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_subarray_div_k",
+        difficulty: "M", 
+        name: "Subarray Sums Divisible by K", 
+        companies: ["Amazon", "Google"], 
+        link: "https://leetcode.com/problems/subarray-sums-divisible-by-k/",
+        problemStatement: "Given an integer array `nums` and an integer `k`, return the number of non-empty subarrays that have a sum divisible by `k`.",
+        testCases: [
+          { input: "nums = [4,5,0,-2,-3,1], k = 5", output: "7" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Prefix Remainder HashMap)",
+            concept: "Wahi remainder logic, but is baar frequency count karni hai. Jitni baar ek remainder pehle aaya hai, utne naye subarrays banenge.",
+            code: `def subarraysDivByK(nums, k):
+    count = 0
+    curr_sum = 0
+    rem_map = {0: 1}
+    
+    for x in nums:
+        curr_sum += x
+        rem = curr_sum % k
+        # Handle negative remainders in Python
+        if rem < 0: rem += k 
+        
+        if rem in rem_map:
+            count += rem_map[rem]
+            rem_map[rem] += 1
+        else:
+            rem_map[rem] = 1
+            
+    return count`,
+            dryRun: [
+              "[STATE] nums=[4,5,0...], k=5, map={0:1} [DESC] x=4: rem=4. map={0:1, 4:1}.",
+              "[STATE] x=5: curr=9, rem=4. rem in map (val=1). count=1. map={0:1, 4:2}.",
+              "[STATE] x=0: curr=9, rem=4. rem in map (val=2). count=3. map={0:1, 4:3}."
+            ],
+            complexity: "Time: O(N), Space: O(K) for map"
+          }
+        ],
+        importantNotes: "Python mein `%` operator negatives ko handle kar leta hai but safe rehne ke liye `rem < 0` check kar sakte hain.\nPrefix remainders divisible logic ka extension hai."
+      },
+      { 
+        isMastery: true, 
+        id: "m_mid_index",
+        difficulty: "E", 
+        name: "Find the Middle Index in Array", 
+        companies: ["Amazon", "Adobe"], 
+        link: "https://leetcode.com/problems/find-the-middle-index-in-array/",
+        problemStatement: "Return the leftmost `middleIndex` that satisfies: `nums[0] + ... + nums[middleIndex-1] == nums[middleIndex+1] + ... + nums[nums.length-1]`.",
+        testCases: [
+          { input: "nums = [2,3,-1,8,4]", output: "3" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Total Sum - Left Sum)",
+            concept: "Ye 'Find Pivot Index' ka identical problem hai. Total sum nikalo aur left sum update karte hue check karo.",
+            code: `def findMiddleIndex(nums):
+    total = sum(nums)
+    left = 0
+    for i, x in enumerate(nums):
+        if left == total - left - x:
+            return i
+        left += x
+    return -1`,
+            dryRun: [
+              "[STATE] nums=[2,3,-1,8,4], total=16 [DESC] i=3 (x=8): left=4. 16-4-8 = 4. 4==4. Return 3."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Problem statements different ho sakte hain but core logic same rehta hai.\nHamesha leftmost pucha jaye toh standard loop index 0 se hi start karein."
+      },
+      { 
+        isMastery: true, 
+        id: "m_circular_sum",
+        difficulty: "M", 
+        name: "Maximum Sum Circular Subarray", 
+        companies: ["Amazon", "Google"], 
+        link: "https://leetcode.com/problems/maximum-sum-circular-subarray/",
+        problemStatement: "Given a circular integer array `nums` of length `n`, return the maximum possible sum of a non-empty subarray.",
+        testCases: [
+          { input: "nums = [1,-2,3,-2]", output: "3" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Modified Kadane's)",
+            concept: "Circular sum do tareeke se ho sakta hai: (1) Normal subarray (Kadane) ya (2) Wrapped subarray (`Total - Min Subarray`). Hum dono ka max lenge.",
+            code: `def maxSubarraySumCircular(nums):
+    total = sum(nums)
+    # Standard Kadane for Max
+    cur_max, max_sum = 0, nums[0]
+    # Standard Kadane for Min
+    cur_min, min_sum = 0, nums[0]
+    
+    for x in nums:
+        cur_max = max(x, cur_max + x)
+        max_sum = max(max_sum, cur_max)
+        cur_min = min(x, cur_min + x)
+        min_sum = min(min_sum, cur_min)
+        
+    if max_sum < 0: return max_sum # All negative case
+    return max(max_sum, total - min_sum)`,
+            dryRun: [
+              "[STATE] nums=[1,-2,3,-2], total=0 [DESC] Max Kadane = 3. Min Kadane = -2. total - (-2) = 2. res = max(3, 2) = 3."
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "Wrapped sum ka logic: 'Subarray humesha beech mein min sum chhod degi toh baki circular max ban jayega'.\nSpecial case: Agar saare numbers negative hain, toh `total - min_sum` zero de dega but array non-empty chahiye, isliye `max_sum` return karein."
+      },
       { difficulty: "M", name: "Number of Subarrays with Bounded Max", companies: ["Google"] },
       { difficulty: "M", name: "Matrix Block Sum", companies: ["Amazon", "Microsoft"] },
       { difficulty: "E", name: "Minimum Value to Get Positive Step-by-Step Sum", companies: ["Google"] },

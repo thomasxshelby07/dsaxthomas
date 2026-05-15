@@ -1,8 +1,47 @@
 .question-list-container {
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 3rem;
+}
+
+.question-list-header {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
+}
+
+.filter-group {
+  display: flex;
+  background: var(--bg-card);
+  padding: 0.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  gap: 0.25rem;
+}
+
+.filter-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.filter-btn.active {
+  color: #fff;
+  background: var(--blue);
+  box-shadow: 0 4px 12px rgba(58, 134, 255, 0.3);
 }
 
 .question-section {
@@ -160,13 +199,143 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.desktop-only { display: block; }
+.mobile-only { display: none; }
+
 @media (max-width: 768px) {
-  .question-table th, .question-table td {
-    padding: 1rem 0.75rem;
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
+  
+  .question-list-header {
+    justify-content: center;
+    margin-bottom: 1rem;
+    margin-top: 1rem;
   }
   
-  .th-companies, .td-companies {
-    display: none;
+  .filter-group {
+    width: 100%;
+    justify-content: space-around;
   }
+
+  .question-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .question-card-mobile {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .question-card-mobile:active {
+    transform: scale(0.98);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .question-card-mobile.solved {
+    opacity: 0.7;
+    border-color: var(--green);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .difficulty-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .difficulty-dot.e { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .difficulty-dot.m { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+  .difficulty-dot.h { background: var(--red); box-shadow: 0 0 8px var(--red); }
+
+  .card-name {
+    flex-grow: 1;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+
+  .solved .card-name {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  .card-status-toggle {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    padding: 0;
+  }
+
+  .card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .card-companies {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .c-tag {
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+
+  .arrow {
+    color: var(--blue);
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+}
+
+.th-status { width: 80px; text-align: center; }
+.td-status { text-align: center; }
+
+.status-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.status-btn:hover {
+  transform: scale(1.2);
+}
+
+.row-solved {
+  opacity: 0.6;
+}
+
+.row-solved .td-name .question-link {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.row-solved:hover {
+  opacity: 1;
 }
 

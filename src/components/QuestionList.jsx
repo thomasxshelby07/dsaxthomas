@@ -1,7 +1,7 @@
 import React from 'react';
 import './QuestionList.css';
 
-const QuestionList = ({ questions, onSelectQuestion }) => {
+const QuestionList = ({ questions, onSelectQuestion, solvedQuestions, onToggleSolved }) => {
   if (!questions || questions.length === 0) return null;
 
   const masteryQuestions = questions.filter(q => q.isMastery);
@@ -12,46 +12,91 @@ const QuestionList = ({ questions, onSelectQuestion }) => {
       <h3 className="section-heading">
         {isMasterySection ? <span className="mastery-badge">{title}</span> : title}
       </h3>
-      <div className="table-responsive">
+      
+      {/* Desktop Table View */}
+      <div className="table-responsive desktop-only">
         <table className="question-table">
           <thead>
             <tr>
+              <th className="th-status">Status</th>
               <th className="th-diff">Diff</th>
               <th className="th-name">Question</th>
               <th className="th-companies">Companies</th>
             </tr>
           </thead>
           <tbody>
-            {qList.map((q, idx) => (
-              <tr key={idx} className="question-row">
-                <td className="td-diff">
-                  <span className={`badge-sm badge-${q.difficulty.toLowerCase()}`}>
-                    [{q.difficulty}]
-                  </span>
-                </td>
-                <td className="td-name">
-                  {q.id ? (
+            {qList.map((q, idx) => {
+              const qId = q.id || q.name;
+              const isSolved = solvedQuestions.includes(qId);
+              const isGenerated = !!q.id;
+              return (
+                <tr key={idx} className={`question-row ${isSolved ? 'row-solved' : ''} ${!isGenerated ? 'is-locked' : ''}`}>
+                  <td className="td-status">
                     <button 
-                      className="question-link" 
-                      onClick={() => onSelectQuestion(q)}
+                      className={`status-btn ${isSolved ? 'solved' : 'todo'}`}
+                      onClick={(e) => { e.stopPropagation(); isGenerated && onToggleSolved(qId); }}
+                      title={!isGenerated ? "Locked" : isSolved ? "Mark as To-do" : "Mark as Solved"}
+                      disabled={!isGenerated}
                     >
-                      {q.name}
+                      {!isGenerated ? "🔒" : isSolved ? "✅" : "⭕"}
                     </button>
-                  ) : (
-                    <span className="question-link static">{q.name}</span>
-                  )}
-                </td>
-                <td className="td-companies">
-                  <div className="company-tags-list">
-                    {q.companies && q.companies.map((company, cIdx) => (
-                      <span key={cIdx} className="company-tag">{company}</span>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="td-diff">
+                    <span className={`badge-sm badge-${q.difficulty.toLowerCase()}`}>
+                      [{q.difficulty}]
+                    </span>
+                  </td>
+                  <td className="td-name">
+                    {isGenerated ? (
+                      <button className="question-link" onClick={() => onSelectQuestion(q)}>{q.name}</button>
+                    ) : (
+                      <span className="question-link static">{q.name} (Coming Soon)</span>
+                    )}
+                  </td>
+                  <td className="td-companies">
+                    <div className="company-tags-list">
+                      {q.companies && q.companies.map((company, cIdx) => (
+                        <span key={cIdx} className="company-tag">{company}</span>
+                      ))}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="mobile-only question-cards">
+        {qList.map((q, idx) => {
+          const qId = q.id || q.name;
+          const isSolved = solvedQuestions.includes(qId);
+          const isGenerated = !!q.id;
+          return (
+            <div key={idx} className={`question-card-mobile ${isSolved ? 'solved' : ''} ${!isGenerated ? 'is-locked' : ''}`} onClick={() => isGenerated && onSelectQuestion(q)}>
+              <div className="card-top">
+                <span className={`difficulty-dot ${q.difficulty.toLowerCase()}`}></span>
+                <span className="card-name">{q.name} {!isGenerated && "(Locked)"}</span>
+                <button 
+                  className="card-status-toggle"
+                  onClick={(e) => { e.stopPropagation(); isGenerated && onToggleSolved(qId); }}
+                  disabled={!isGenerated}
+                >
+                  {!isGenerated ? "🔒" : isSolved ? "✅" : "⭕"}
+                </button>
+              </div>
+              <div className="card-bottom">
+                <div className="card-companies">
+                  {q.companies?.slice(0, 3).map((c, i) => (
+                    <span key={i} className="c-tag">{c}</span>
+                  ))}
+                </div>
+                {isGenerated && <span className="arrow">→</span>}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

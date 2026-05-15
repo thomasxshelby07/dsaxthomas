@@ -29,7 +29,16 @@ const renderVisual = (id) => {
   return null;
 };
 
-const PatternCard = ({ pattern, onSelectQuestion }) => {
+const PatternCard = ({ pattern, onSelectQuestion, solvedQuestions, onToggleSolved }) => {
+  const [filter, setFilter] = React.useState('all');
+
+  const filteredQuestions = pattern.questions.filter(q => {
+    const isSolved = solvedQuestions.includes(q.id || q.name);
+    if (filter === 'solved') return isSolved;
+    if (filter === 'unsolved') return !isSolved;
+    return true;
+  });
+
   return (
     <section className="pattern-section">
       <div className="pattern-header">
@@ -103,7 +112,20 @@ const PatternCard = ({ pattern, onSelectQuestion }) => {
         </div>
       </div>
 
-      <QuestionList questions={pattern.questions} onSelectQuestion={onSelectQuestion} />
+      <div className="question-list-header">
+        <div className="filter-group">
+          <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All</button>
+          <button className={`filter-btn ${filter === 'unsolved' ? 'active' : ''}`} onClick={() => setFilter('unsolved')}>To-Do</button>
+          <button className={`filter-btn ${filter === 'solved' ? 'active' : ''}`} onClick={() => setFilter('solved')}>Solved</button>
+        </div>
+      </div>
+
+      <QuestionList 
+        questions={filteredQuestions} 
+        onSelectQuestion={onSelectQuestion} 
+        solvedQuestions={solvedQuestions}
+        onToggleSolved={onToggleSolved}
+      />
     </section>
   );
 };
