@@ -1,0 +1,198 @@
+.hero-container {
+  padding: 4rem 2rem;
+  background: radial-gradient(circle at 50% -20%, var(--bg-tertiary) 0%, var(--bg-primary) 70%);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--blue);
+  background: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  border-radius: var(--radius-xl);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.hero-title .highlight {
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+}
+
+.hero-author {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+  font-style: italic;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.stat-box {
+  background: rgba(22, 27, 34, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+  transition: var(--transition);
+}
+
+.stat-box:hover {
+  transform: translateY(-5px);
+  background: rgba(31, 41, 55, 0.8);
+}
+
+.glow-blue:hover { box-shadow: var(--shadow-glow-blue); border-color: rgba(88,166,255,0.3); }
+.glow-green:hover { box-shadow: var(--shadow-glow-green); border-color: rgba(63,185,80,0.3); }
+.glow-orange:hover { box-shadow: 0 0 24px rgba(240, 136, 62, 0.15); border-color: rgba(240,136,62,0.3); }
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.glow-blue .stat-value { color: var(--blue); }
+.glow-green .stat-value { color: var(--green); }
+.glow-orange .stat-value { color: var(--orange); }
+
+.hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.meta-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.legend-items {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge-easy {
+  background: var(--green-dim);
+  color: var(--green);
+  border: 1px solid rgba(63, 185, 80, 0.2);
+}
+
+.badge-medium {
+  background: var(--yellow-dim);
+  color: var(--yellow);
+  border: 1px solid rgba(227, 179, 65, 0.2);
+}
+
+.badge-hard {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(255, 123, 114, 0.2);
+}
+
+.company-tags {
+  width: 100%;
+}
+
+.tags-marquee {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-weight: 500;
+}
+
+.tags-marquee span {
+  color: var(--text-primary);
+}
+
+@media (min-width: 768px) {
+  .hero-meta {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1.5rem 2.5rem;
+    align-items: flex-start;
+  }
+  .company-tags {
+    width: auto;
+    max-width: 60%;
+  }
+  .tags-marquee {
+    justify-content: flex-end;
+  }
+}
