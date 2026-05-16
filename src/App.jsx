@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
-import Hero from './components/Hero';
+import TopicList from './components/TopicList';
 import PatternCard from './components/PatternCard';
 import QuestionDetail from './components/QuestionDetail';
+import PythonTopicCard from './components/PythonTopicCard';
+import DomainSelection from './components/DomainSelection';
 import { patternsData } from './data/patterns';
+import { pythonData } from './data/pythonData';
 import './App.css';
 
 function App() {
+  const [domain, setDomain] = useState(null); // 'DSA', 'PYTHON', or null for home
   const [selectedPatternId, setSelectedPatternId] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [solvedQuestions, setSolvedQuestions] = useState(() => {
     const saved = localStorage.getItem('dsa_solved_questions');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [completedPythonLessons, setCompletedPythonLessons] = useState(() => {
+    const saved = localStorage.getItem('python_completed_lessons');
     return saved ? JSON.parse(saved) : [];
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -19,20 +27,43 @@ function App() {
     localStorage.setItem('dsa_solved_questions', JSON.stringify(solvedQuestions));
   }, [solvedQuestions]);
 
+  React.useEffect(() => {
+    localStorage.setItem('python_completed_lessons', JSON.stringify(completedPythonLessons));
+  }, [completedPythonLessons]);
+
   const toggleSolved = (id) => {
     setSolvedQuestions(prev => 
       prev.includes(id) ? prev.filter(qId => qId !== id) : [...prev, id]
     );
   };
 
-  const selectedPattern = patternsData.find(p => p.id === selectedPatternId);
+  const togglePythonLesson = (lessonId) => {
+    setCompletedPythonLessons(prev => 
+      prev.includes(lessonId) ? prev.filter(id => id !== lessonId) : [...prev, lessonId]
+    );
+  };
 
-  // When changing pattern, clear any selected question
+  const currentData = domain === 'DSA' ? patternsData : domain === 'PYTHON' ? pythonData : [];
+  const selectedPattern = currentData.find(p => p.id === selectedPatternId);
+
+  // When changing pattern or domain, clear selected questions
   const handlePatternSelect = (id) => {
     setSelectedPatternId(id);
     setSelectedQuestion(null);
     setIsSidebarOpen(false); // Close sidebar on selection
   };
+
+  const handleDomainChange = (newDomain) => {
+    if (domain !== newDomain) {
+      setDomain(newDomain);
+      setSelectedPatternId(null);
+      setSelectedQuestion(null);
+    }
+  };
+
+  if (domain === null) {
+    return <DomainSelection onSelectDomain={handleDomainChange} />;
+  }
 
   return (
     <div className={`app-layout ${selectedPattern ? 'pattern-active' : ''} ${isSidebarOpen ? 'sidebar-open' : ''}`}>
@@ -40,14 +71,19 @@ function App() {
         <button className="menu-btn" onClick={() => setIsSidebarOpen(true)}>
           <span className="icon">☰</span>
         </button>
-        <h1 className="mobile-logo">DSA Mastery</h1>
+        <h1 className="mobile-logo" onClick={() => setDomain(null)} style={{ cursor: 'pointer' }}>
+          {domain === 'DSA' ? 'DSA Mastery' : 'Python Mastery'}
+        </h1>
       </div>
 
       <Sidebar 
-        patterns={patternsData} 
+        patterns={currentData} 
         selectedId={selectedPatternId} 
         onSelect={handlePatternSelect}
         onClose={() => setIsSidebarOpen(false)}
+        domain={domain}
+        onDomainChange={handleDomainChange}
+        completedPythonLessons={completedPythonLessons}
       />
 
       {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
@@ -56,12 +92,12 @@ function App() {
         {selectedPattern && !selectedQuestion && (
           <div className="mobile-nav">
             <button className="back-btn" onClick={() => setSelectedPatternId(null)}>
-              <span className="icon">←</span> Back to Patterns
+              <span className="icon">←</span> Back to {domain === 'DSA' ? 'Patterns' : 'Topics'}
             </button>
           </div>
         )}
 
-        {selectedQuestion ? (
+        {selectedQuestion && domain === 'DSA' ? (
           <main className="question-detail-view">
             <QuestionDetail 
               question={selectedQuestion} 
@@ -70,12 +106,13 @@ function App() {
           </main>
         ) : !selectedPattern ? (
           <div className="home-view">
-            <Hero />
-            <div className="select-prompt">
-              <h2>👈 Select a pattern from the menu to begin</h2>
-            </div>
+            <TopicList 
+              items={currentData} 
+              onSelect={handlePatternSelect} 
+              domain={domain} 
+            />
           </div>
-        ) : (
+        ) : domain === 'DSA' ? (
           <main className="patterns-container">
             <PatternCard 
               pattern={selectedPattern} 
@@ -84,11 +121,21 @@ function App() {
               onToggleSolved={toggleSolved}
             />
           </main>
+        ) : (
+          <main className="patterns-container">
+            <PythonTopicCard 
+              topic={selectedPattern} 
+              completedLessons={completedPythonLessons}
+              onToggleLesson={togglePythonLesson}
+              onSelect={handlePatternSelect}
+              allTopics={currentData}
+            />
+          </main>
         )}
         
         {!selectedQuestion && (
           <footer className="app-footer">
-            <p>Built for Data Structures & Algorithms Mastery</p>
+            <p>Built for {domain === 'DSA' ? 'Data Structures & Algorithms' : 'Python'} Mastery</p>
           </footer>
         )}
       </div>
@@ -97,6 +144,7 @@ function App() {
 }
 
 export default App;
+
 
 
 

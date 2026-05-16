@@ -1,0 +1,145 @@
+.domain-selection-container {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at center, #1a1e29 0%, #05070a 100%);
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.domain-selection-content {
+  text-align: center;
+  width: 100%;
+  max-width: 800px;
+}
+
+.ds-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.ds-subtitle {
+  font-size: 1rem;
+  color: #8b949e;
+  margin-bottom: 4rem;
+  font-weight: 400;
+}
+
+.ds-profiles-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .ds-profiles-wrapper {
+    gap: 4rem;
+  }
+}
+
+.ds-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  group: profile;
+}
+
+.ds-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 3px solid transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover effects for the avatar */
+.ds-profile:hover .ds-avatar {
+  transform: scale(1.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.dsa-avatar {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.ds-profile:hover .dsa-avatar {
+  border-color: #58a6ff;
+  box-shadow: 0 0 30px rgba(88, 166, 255, 0.3);
+}
+
+.python-avatar {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.ds-profile:hover .python-avatar {
+  border-color: #d2a8ff;
+  box-shadow: 0 0 30px rgba(210, 168, 255, 0.3);
+}
+
+.icon-text {
+  font-size: 2.5rem;
+  font-weight: bold;
+  font-family: var(--font-mono, monospace);
+  transition: transform 0.3s ease;
+  z-index: 2;
+}
+
+.dsa-avatar .icon-text {
+  color: #58a6ff;
+}
+
+.python-avatar .icon-text {
+  /* color left default for emoji */
+}
+
+.ds-profile:hover .icon-text {
+  transform: scale(1.1);
+}
+
+.ds-profile-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #8b949e; /* Hotstar uses gray by default */
+  transition: color 0.3s ease;
+}
+
+/* Hotstar makes the text white on hover */
+.ds-profile:hover .ds-profile-name {
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .ds-avatar {
+    width: 150px;
+    height: 150px;
+  }
+  .icon-text {
+    font-size: 3rem;
+  }
+  .ds-profile-name {
+    font-size: 1.25rem;
+  }
+}
+

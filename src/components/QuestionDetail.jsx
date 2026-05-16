@@ -83,6 +83,26 @@ const QuestionDetail = ({ question, onBack }) => {
         </div>
       )}
 
+      {question.testCases && question.testCases.length > 0 && (
+        <section className="qd-section testcases-section">
+          <h2 className="section-title">Example Test Cases</h2>
+          <div className="testcases-grid">
+            {question.testCases.map((tc, i) => (
+              <div key={i} className="testcase-box">
+                <div className="tc-header">Example {i + 1}</div>
+                <div className="tc-content">
+                  <div className="tc-row"><strong>Input:</strong> <code>{tc.input}</code></div>
+                  <div className="tc-row"><strong>Output:</strong> <code>{tc.output}</code></div>
+                  {tc.explanation && (
+                    <div className="tc-row"><strong>Explanation:</strong> {parseMarkdown(tc.explanation)}</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {currentSolution && (
         <div className="solution-content">
           {currentSolution.concept && (
@@ -98,35 +118,67 @@ const QuestionDetail = ({ question, onBack }) => {
 
           {currentSolution.dryRun && currentSolution.dryRun.length > 0 && (
             <section className="qd-section dryrun-section">
-              <h2 className="section-title">Dry Run Breakdown</h2>
+              <h2 className="section-title">Step-by-Step Dry Run</h2>
               <div className="dryrun-steps">
                 {currentSolution.dryRun.map((step, i) => {
-                  const hasState = step.includes('[STATE]');
-                  const hasDesc = step.includes('[DESC]');
-                  
-                  let state = "";
-                  let desc = step;
-                  
-                  if (hasState && hasDesc) {
-                    state = step.split('[STATE]')[1].split('[DESC]')[0].trim();
-                    desc = step.split('[DESC]')[1].trim();
-                  } else if (hasState) {
-                    state = step.split('[STATE]')[1].trim();
-                    desc = step.split('[STATE]')[0].trim();
-                  }
+                  // New logic: Split by <br> to handle multi-line dry run steps
+                  const lines = step.split('<br>');
+                  const title = lines[0]; // Usually "**Step X: ...**"
+                  const details = lines.slice(1); // The rest
 
                   return (
                     <div key={i} className="dryrun-step">
                       <div className="dryrun-step-num">{i + 1}</div>
+                      <div className="dryrun-step-header">
+                        {parseMarkdown(title)}
+                      </div>
                       <div className="dryrun-content">
-                        {state && (
-                          <div className="dr-state">
-                             <strong>STATE:</strong> {parseMarkdown(state)}
-                          </div>
-                        )}
-                        <div className="dr-desc">
-                           {parseMarkdown(desc)}
-                        </div>
+                        {details.map((line, idx) => {
+                          const cleanLine = line.trim().replace(/^•\s*/, '');
+                          const isKeyValuePair = cleanLine.includes(':');
+                          
+                          if (isKeyValuePair) {
+                            const [rawKey, ...valParts] = cleanLine.split(':');
+                            const key = rawKey.replace(/\*\*/g, '').trim(); // Remove asterisks from key
+                            const val = valParts.join(':').trim();
+                            const isArray = val.trim().startsWith('[') && val.trim().endsWith(']');
+                            
+                            // Visual array rendering
+                            const renderVal = (v) => {
+                              if (isArray) {
+                                try {
+                                  // Remove brackets and split by comma
+                                  const items = v.replace(/[\[\]]/g, '').split(',');
+                                  return (
+                                    <div className="visual-array">
+                                      {items.map((item, idx) => (
+                                        <div key={idx} className="array-box">
+                                          {item.trim().replace(/['"]/g, '')}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  );
+                                } catch(e) { return parseMarkdown(v); }
+                              }
+                              return parseMarkdown(v);
+                            };
+
+                            return (
+                              <div key={idx} className={`dr-state-row ${isArray ? 'dr-array-row' : ''}`}>
+                                <span className="dr-key">
+                                  {isArray ? '📊 ' : '📍 '}{key}:
+                                </span>
+                                <span className="dr-val">{renderVal(val)}</span>
+                              </div>
+                            );
+                          }
+                          
+                          return (
+                            <div key={idx} className="dr-line">
+                               <span className="dr-bullet">💡</span> {parseMarkdown(cleanLine)}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   );
@@ -156,25 +208,7 @@ const QuestionDetail = ({ question, onBack }) => {
         </div>
       )}
 
-      {question.testCases && question.testCases.length > 0 && (
-        <section className="qd-section testcases-section">
-          <h2 className="section-title">Test Cases (Input/Output)</h2>
-          <div className="testcases-grid">
-            {question.testCases.map((tc, i) => (
-              <div key={i} className="testcase-box">
-                <div className="tc-header">Example {i + 1}</div>
-                <div className="tc-content">
-                  <div className="tc-row"><strong>Input:</strong> <code>{tc.input}</code></div>
-                  <div className="tc-row"><strong>Output:</strong> <code>{tc.output}</code></div>
-                  {tc.explanation && (
-                    <div className="tc-row"><strong>Explanation:</strong> {parseMarkdown(tc.explanation)}</div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+
 
       {question.importantNotes && (
         <section className="qd-section notes-section">

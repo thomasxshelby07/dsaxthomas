@@ -57,6 +57,42 @@
   text-transform: uppercase;
 }
 
+.domain-toggle-container {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.domain-toggle {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.toggle-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.toggle-btn:hover {
+  color: var(--text-secondary);
+}
+
+.toggle-btn.active {
+  background: var(--blue-dim);
+  color: var(--blue);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .sidebar-nav {
   flex-grow: 1;
   overflow-y: auto;
@@ -134,4 +170,64 @@
 .sidebar-nav::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 4px;
+}
+
+.sidebar-list-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.nested-lessons {
+  list-style: none;
+  padding: 0 0 0 2rem;
+  margin: 0 0 0.5rem 0;
+  border-left: 1px solid var(--border);
+  margin-left: 1.5rem;
+}
+
+.nested-lesson-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.nested-lesson-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nested-lesson-btn.completed {
+  color: var(--green);
+}
+
+.lesson-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.nested-lesson-btn.completed .lesson-indicator {
+  background: var(--green);
+}
+
+.lesson-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.check-icon {
+  font-size: 0.8rem;
 }

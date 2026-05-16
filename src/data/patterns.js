@@ -36,28 +36,34 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Optimal (Two Pointer)",
-            concept: "Hum **two pointers** use karenge: ek starting mein (`left`) aur ek ending mein (`right`). Har step par hum dono positions ke characters ko **swap** karenge aur pointers ko beech ki taraf move karenge.",
+            type: "Brute Force",
+            concept: "Array ke dono ends se characters ko swap karte huye middle ki taraf aao. Isse bina extra memory ke string reverse ho jayegi.",
             code: `def reverseString(s):
-    # Two pointer approach
-    left, right = 0, len(s) - 1
-    
-    while left < right:
-        # Swap characters in-place
-        s[left], s[right] = s[right], s[left]
-        
-        # Move pointers towards each other
-        left += 1
-        right -= 1`,
+    # Python slicing is O(N) space
+    res = s[::-1]
+    for i in range(len(s)):
+        s[i] = res[i]`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono pointers ko swap karo aur ek-ek step andar move karo. Yeh O(1) space ka best tarika hai.",
+            code: `def reverseString(s):
+    l, r = 0, len(s) - 1
+    while l < r:
+        # Swap in-place
+        s[l], s[r] = s[r], s[l]
+        l += 1
+        r -= 1`,
             dryRun: [
-              "[STATE] s=['h','e','l','l','o'], left=0, right=4 [DESC] Start pointers at both ends. Swap 'h' and 'o'.",
-              "[STATE] s=['o','e','l','l','h'], left=1, right=3 [DESC] Swap 'e' and 'l'.",
-              "[STATE] s=['o','l','l','e','h'], left=2, right=2 [DESC] Pointers met at index 2. Reverse complete."
+              "**Step 1: Start**<br>• **State:** s=['h','e','l','l','o'], L=0 ('h'), R=4 ('o')<br>• **Action:** Swap s[0] and s[4]. Move L to 1, R to 3.<br>• **Result:** s=['o','e','l','l','h']",
+              "**Step 2: Middle Swap**<br>• **State:** s=['o','e','l','l','h'], L=1 ('e'), R=3 ('l')<br>• **Action:** Swap s[1] and s[3]. Move L to 2, R to 2.<br>• **Result:** s=['o','l','l','e','h']",
+              "**Step 3: Finish**<br>• **State:** L=2, R=2<br>• **Action:** L is no longer < R. Stop loop.<br>• **Result:** Final reversed array: ['o','l','l','e','h']"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "In-place modification ke liye hamesha **Two Pointer** technique standard hai.\nSpace efficiency (O(1)) iski sabse badi strength hai."
+        importantNotes: "• **Interview Tip:** In-place modification ke liye hamesha **Two Pointer** technique standard hai. Space efficiency (O(1)) iski sabse badi strength hai."
       },
       { 
         isMastery: true, 
@@ -73,34 +79,45 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Optimal (Two Pointer)",
-            concept: "Hum string ke dono ends se start karenge. Agar dono pointers par **vowels** milte hain, tabhi swap karenge. Agar ek side vowel nahi hai, toh pointer ko aage badha denge.",
+            type: "Brute Force",
+            concept: "String se saare vowels nikal kar ek list mein rakho, use reverse karo, aur fir wapas string mein bhar do.",
             code: `def reverseVowels(s):
-    s = list(s) # Strings are immutable in Python
+    vowels = "aeiouAEIOU"
+    extracted = [c for c in s if c in vowels]
+    extracted.reverse()
+    
+    res = list(s)
+    idx = 0
+    for i in range(len(res)):
+        if res[i] in vowels:
+            res[i] = extracted[idx]
+            idx += 1
+    return "".join(res)`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono ends se pointers chalao. Jab dono pointers kisi vowel par rukein, tab unhe swap kardo.",
+            code: `def reverseVowels(s):
+    s = list(s)
     vowels = set("aeiouAEIOU")
     l, r = 0, len(s) - 1
-    
     while l < r:
-        if s[l] not in vowels:
-            l += 1
-        elif s[r] not in vowels:
-            r -= 1
+        if s[l] not in vowels: l += 1
+        elif s[r] not in vowels: r -= 1
         else:
-            # Both are vowels, swap them
             s[l], s[r] = s[r], s[l]
-            l += 1
-            r -= 1
-            
+            l += 1; r -= 1
     return "".join(s)`,
             dryRun: [
-              "[STATE] s='hello', l=0, r=4 [DESC] 'h' is not a vowel, l moves to 1.",
-              "[STATE] s='hello', l=1, r=4 [DESC] 'e' (l=1) and 'o' (r=4) are vowels. Swap them.",
-              "[STATE] s='holle', l=2, r=3 [DESC] Pointers pass each other. Done."
+              "**Step 1: Searching**<br>• **State:** s='hello', L=0 ('h'), R=4 ('o')<br>• **Action:** 'h' is NOT a vowel, move L. 'o' IS a vowel, keep R.<br>• **Result:** L=1 ('e'), R=4 ('o')",
+              "**Step 2: Both Vowels**<br>• **State:** L=1 ('e'), R=4 ('o')<br>• **Action:** Both are vowels! Swap them. Move L to 2, R to 3.<br>• **Result:** s='holle', L=2 ('l'), R=3 ('l')",
+              "**Step 3: End**<br>• **State:** L=2, R=3. Both 'l' are NOT vowels. L moves to 3, R moves to 2.<br>• **Action:** L (3) > R (2). Stop loop.<br>• **Result:** Final: 'holle'"
             ],
-            complexity: "Time: O(N), Space: O(N) to store characters"
+            complexity: "Time: O(N), Space: O(N)"
           }
         ],
-        importantNotes: "Hamesha set ka use karein vowels store karne ke liye for **O(1)** lookup.\nIn-place processing ke liye string ko list mein convert karna zaroori hai Python mein."
+        importantNotes: "• **Logic Hint:** Hamesha set ka use karein vowels store karne ke liye for **O(1)** lookup. Python mein string immutable hai, isliye pehle list mein convert karna padta hai."
       },
       { 
         isMastery: true, 
@@ -115,9 +132,22 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Optimal (Three Pointer)",
-            concept: "Since `nums1` has extra space at the end, hum **backwards** merge karenge. Badi values ko last mein rakhte jayenge taaki existing data overwrite na ho.",
+            type: "Brute Force",
+            concept: "Dono arrays ko merge karke ek naya array banao aur use sort kardo.",
             code: `def merge(nums1, m, nums2, n):
+    # Copy nums2 to the end of nums1
+    for i in range(n):
+        nums1[m + i] = nums2[i]
+    # Sort the combined array
+    nums1.sort()`,
+            complexity: "Time: O((m+n) log (m+n)), Space: O(1)"
+          },
+          {
+            type: "Optimal (Three Pointer)",
+            concept: "Peeche se (end se) elements ko compare karo aur `nums1` ke khali space mein bharte jao. Isse overwriting nahi hogi.",
+            code: `def merge(nums1, m, nums2, n):
+    # p1, p2 are pointers for original elements
+    # p is the pointer for the write location
     p1, p2, p = m - 1, n - 1, m + n - 1
     
     while p1 >= 0 and p2 >= 0:
@@ -129,20 +159,19 @@ export const patternsData = [
             p2 -= 1
         p -= 1
         
-    # Remaining nums2
+    # Copy remaining elements from nums2
     while p2 >= 0:
         nums1[p] = nums2[p2]
-        p2 -= 1
-        p -= 1`,
+        p2 -= 1; p -= 1`,
             dryRun: [
-              "[STATE] nums1=[1,2,3,0,0,0], p1=2, p2=2, p=5 [DESC] nums2[2]=6 is bigger than nums1[2]=3. Place 6 at nums1[5].",
-              "[STATE] nums1=[1,2,3,0,0,6], p1=2, p2=1, p=4 [DESC] nums2[1]=5 is bigger than nums1[2]=3. Place 5 at nums1[4].",
-              "[STATE] nums1=[1,2,3,0,5,6], p1=2, p2=0, p=3 [DESC] nums1[2]=3 is bigger than nums2[0]=2. Place 3 at nums1[3]."
+              "**Step 1: Compare Ends**<br>• **State:** nums1=[1,2,3,0,0,0], nums2=[2,5,6], p1=2 (val 3), p2=2 (val 6), write=5<br>• **Action:** 6 > 3. Write 6 at index 5. Move p2 and write pointer.<br>• **Result:** nums1=[...,6], p2=1 (5), write=4",
+              "**Step 2: Next Largest**<br>• **State:** p1=2 (3), p2=1 (5), write=4<br>• **Action:** 5 > 3. Write 5 at index 4. Move p2 and write pointer.<br>• **Result:** nums1=[...,5,6], p2=0 (2), write=3",
+              "**Step 3: Overlap**<br>• **State:** p1=2 (3), p2=0 (2), write=3<br>• **Action:** 3 > 2. Write 3 at index 3. Move p1 and write pointer.<br>• **Result:** nums1=[1,2,3,3,5,6], p1=1 (2), write=2"
             ],
             complexity: "Time: O(m+n), Space: O(1)"
           }
         ],
-        importantNotes: "**Backward Two-Pointer** approach is efficient because it avoids shifting elements.\nHamesha end-to-start logic tab socho jab array mein extra capacity peeche ho."
+        importantNotes: "• **Key Logic:** **Backward Two-Pointer** approach tab use karo jab array mein peeche extra space ho. Isse shift karne ki zaroorat nahi padti."
       },
       { 
         isMastery: true, 
@@ -157,32 +186,42 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Greedy + Two Pointer",
-            concept: "Pehle dono arrays ko **sort** karenge. Phir small greed wale bacche ko sabse small compatible cookie denge. Agar cookie choti hai greed se, toh next badi cookie check karenge.",
+            type: "Brute Force",
+            concept: "Saare combinations check karo ki kaunsa cookie kis bache ko satisfy karega. Yeh O(N*M) lega.",
             code: `def findContentChildren(g, s):
-    g.sort()
-    s.sort()
-    
-    child_idx = 0
-    cookie_idx = 0
-    
-    while child_idx < len(g) and cookie_idx < len(s):
-        if s[cookie_idx] >= g[child_idx]:
-            # Satisfied child
-            child_idx += 1
-        # In both cases, move to next cookie
-        cookie_idx += 1
-        
-    return child_idx`,
+    # This is a conceptual BF; sorting is usually required even for BF
+    g.sort(); s.sort()
+    count = 0
+    used = [False] * len(s)
+    for greed in g:
+        for i in range(len(s)):
+            if not used[i] and s[i] >= greed:
+                count += 1
+                used[i] = True
+                break
+    return count`,
+            complexity: "Time: O(N*M), Space: O(M)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono ko sort karo. Sabse chote greed wale bache ko sabse chota fit cookie dene ki koshish karo.",
+            code: `def findContentChildren(g, s):
+    g.sort(); s.sort()
+    child = cookie = 0
+    while child < len(g) and cookie < len(s):
+        if s[cookie] >= g[child]:
+            child += 1 # Satisfied
+        cookie += 1 # Move to next cookie anyway
+    return child`,
             dryRun: [
-              "[STATE] g=[1,2,3], s=[1,1], c_i=0, k_i=0 [DESC] s[0]=1 matches g[0]=1. Child 0 satisfied.",
-              "[STATE] g=[1,2,3], s=[1,1], c_i=1, k_i=1 [DESC] s[1]=1 is less than g[1]=2. Skip cookie.",
-              "[STATE] c_i=1 [DESC] No more cookies. Final satisfied = 1."
+              "**Step 1: Satisfy Small**<br>• **State:** g=[1,2], s=[1,2,3], child=0 (1), cookie=0 (1)<br>• **Action:** 1 >= 1. Child 0 satisfied. Move child and cookie pointers.<br>• **Result:** child=1, cookie=1",
+              "**Step 2: Satisfy Next**<br>• **State:** child=1 (2), cookie=1 (2)<br>• **Action:** 2 >= 2. Child 1 satisfied. Move child and cookie pointers.<br>• **Result:** child=2, cookie=2",
+              "**Step 3: Finish**<br>• **State:** child=2 (len reached)<br>• **Action:** No more children to satisfy. Stop.<br>• **Result:** Returns 2"
             ],
-            complexity: "Time: O(N log N) for sorting, Space: O(1)"
+            complexity: "Time: O(N log N), Space: O(1)"
           }
         ],
-        importantNotes: "Sorting is key to **greedy** problems with Two Pointers.\nAlways satisfy the easiest requirement first (smallest greed)."
+        importantNotes: "• **Greedy Logic:** Sorting hamesha greedy problems mein help karti hai. Pehle sabse kam demand (smallest greed) ko satisfy karo."
       },
       { 
         isMastery: true, 
@@ -197,29 +236,35 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Two Pointer (Opposite)",
-            concept: "Ek pointer `left` par rakho (looking for odd) aur ek `right` par (looking for even). Jab left par odd aur right par even mile, toh dono ko **swap** kar do.",
+            type: "Brute Force",
+            concept: "Do alag lists banao (even aur odd), fir unhe concatenate (join) kardo.",
+            code: `def sortArrayByParity(nums):
+    evens = [x for x in nums if x % 2 == 0]
+    odds = [x for x in nums if x % 2 != 0]
+    return evens + odds`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "L and R pointers ka use karke Even ko aage aur Odd ko peeche swap karte jao.",
             code: `def sortArrayByParity(nums):
     l, r = 0, len(nums) - 1
-    
     while l < r:
         if nums[l] % 2 > nums[r] % 2:
             # Odd at left, Even at right -> Swap
             nums[l], nums[r] = nums[r], nums[l]
-            
         if nums[l] % 2 == 0: l += 1
         if nums[r] % 2 == 1: r -= 1
-        
     return nums`,
             dryRun: [
-              "[STATE] nums=[3,1,2,4], l=0, r=3 [DESC] 3(odd) at l and 4(even) at r. Swap them.",
-              "[STATE] nums=[4,1,2,3], l=1, r=2 [DESC] 1(odd) at l and 2(even) at r. Swap them.",
-              "[STATE] nums=[4,2,1,3], l=2, r=1 [DESC] l met r. Array sorted."
+              "**Step 1: Found Mismatch**<br>• **State:** nums=[3, 1, 2, 4], L=0 (3), R=3 (4)<br>• **Action:** 3 is Odd, 4 is Even. Swap! Move both inwards.<br>• **Result:** nums=[4, 1, 2, 3], L=1, R=2",
+              "**Step 2: Second Mismatch**<br>• **State:** L=1 (1), R=2 (2)<br>• **Action:** 1 is Odd, 2 is Even. Swap! Move both inwards.<br>• **Result:** nums=[4, 2, 1, 3], L=2, R=1",
+              "**Step 3: Terminate**<br>• **State:** L=2, R=1<br>• **Action:** L > R. Stop.<br>• **Result:** Final Parity Array: [4, 2, 1, 3]"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "Partitioning problems are classic examples of **In-place Two Pointers**.\nOrder maintain karna zaroori nahi hai yahan, isliye opposite pointers work best."
+        importantNotes: "• **Pointer Logic:** Partitioning problems mein humesha in-place swap optimal hota hai. Relative order matter nahi karta toh opposite pointers best hain."
       },
       { 
         isMastery: true, 
@@ -234,33 +279,43 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Two Pointer",
-            concept: "Hum do pointers maintain karenge: ek `even` index (0, 2, 4...) ke liye aur ek `odd` index (1, 3, 5...) ke liye. Agar even index par odd value milti hai, toh hum next galat odd index wali value se swap kar denge.",
+            type: "Brute Force",
+            concept: "Ek naya array banao aur even values ko even indices par aur odd values ko odd indices par bharte jao.",
             code: `def sortArrayByParityII(nums):
     n = len(nums)
+    res = [0] * n
     even, odd = 0, 1
-    
-    while even < n and odd < n:
-        if nums[even] % 2 == 0:
-            even += 2
-        elif nums[odd] % 2 == 1:
-            odd += 2
+    for x in nums:
+        if x % 2 == 0:
+            res[even] = x; even += 2
         else:
-            # Both are in wrong places, swap them
+            res[odd] = x; odd += 2
+    return res`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono pointers (even aur odd index) ko maintain karo aur misplaced elements ko swap kardo.",
+            code: `def sortArrayByParityII(nums):
+    even, odd = 0, 1
+    n = len(nums)
+    while even < n and odd < n:
+        if nums[even] % 2 == 0: even += 2
+        elif nums[odd] % 2 == 1: odd += 2
+        else:
+            # Both misplaced, swap
             nums[even], nums[odd] = nums[odd], nums[even]
-            even += 2
-            odd += 2
-            
+            even += 2; odd += 2
     return nums`,
             dryRun: [
-              "[STATE] nums=[4,2,5,7], even=0, odd=1 [DESC] nums[0]=4 is even (Correct). even moves to 2.",
-              "[STATE] nums=[4,2,5,7], even=2, odd=1 [DESC] nums[2]=5 is odd (Wrong) AND nums[1]=2 is even (Wrong). Swap them.",
-              "[STATE] nums=[4,5,2,7], even=4, odd=3 [DESC] even reached end. Done."
+              "**Step 1: Check Even Index**<br>• **State:** nums=[4, 2, 5, 7], even=0 (4), odd=1 (2)<br>• **Action:** nums[0] is even (Correct). Move even pointer by 2.<br>• **Result:** even=2 (5), odd=1 (2)",
+              "**Step 2: Detect Double Misplaced**<br>• **State:** even=2 (5), odd=1 (2)<br>• **Action:** nums[2] is odd (Wrong!) AND nums[1] is even (Wrong!). Swap them and move both pointers.<br>• **Result:** nums=[4, 5, 2, 7], even=4, odd=3",
+              "**Step 3: End**<br>• **State:** even=4, odd=3 (7)<br>• **Action:** even is out of bounds. Stop.<br>• **Result:** Array is [4, 5, 2, 7]"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "Index-based partitioning ke liye multiple pointers move karna efficient hota hai.\nCondition check (`% 2`) determine karti hai ki pointer move hoga ya swap."
+        importantNotes: "Index-based partitioning ke liye multiple pointers move karna efficient hota hai. Condition check (`% 2`) determine karti hai ki pointer move hoga ya swap."
       },
       { 
         isMastery: true, 
@@ -275,14 +330,27 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Two Pass (In-place)",
-            concept: "Pehle hum count karenge ki total kitne extra spaces chahiye. Phir **backward pass** mein elements ko unki final position par shift karenge. Zeroes ko do baar write karenge.",
+            type: "Brute Force",
+            concept: "Ek naya list banao aur jab bhi 0 mile, use do baar append kardo.",
+            code: `def duplicateZeros(arr):
+    n = len(arr)
+    res = []
+    for x in arr:
+        res.append(x)
+        if x == 0: res.append(0)
+    # Truncate and copy back
+    for i in range(n):
+        arr[i] = res[i]`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Pehle zeros count karo, fir backward pass karke elements ko unki final position par shift kardo.",
             code: `def duplicateZeros(arr):
     n = len(arr)
     zeros = arr.count(0)
     
-    # Second pass: fill from backward
-    # We use logic to skip elements that go out of bounds
+    # Fill from backward to avoid overwriting
     for i in range(n - 1, -1, -1):
         if i + zeros < n:
             arr[i + zeros] = arr[i]
@@ -291,14 +359,13 @@ export const patternsData = [
             if i + zeros < n:
                 arr[i + zeros] = 0`,
             dryRun: [
-              "[STATE] arr=[1,0,2,3,0,4,5,0], zeros=3 [DESC] Start from last index. Move elements to (i + zeros).",
-              "[STATE] i=7, arr[7]=0 [DESC] 7+3=10 > 8. Skip. zeros becomes 2.",
-              "[STATE] i=1, arr[1]=0 [DESC] 1+1=2 < 8. Place 0 at arr[2]. Duplicate at arr[1]."
+              "**Step 1: Count Zeros**<br>• **State:** arr=[1,0,2,3,0,4,5,0], n=8, zeros=3<br>• **Action:** Perform backward pass to shift elements. p1=7 (val 0).<br>• **Result:** Last zero doesn't fit in size 8. Move to next.",
+              "**Step 2: Copy Elements**<br>• **State:** i=5 (4). i+zeros = 5+3=8 (Out of bounds).<br>• **State:** i=4 (0). i+zeros = 4+2=6. Write 0 at index 6 and 5. decrement zeros.<br>• **Result:** arr=[1,0,0,2,3,0,0,4]"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "Array shift problems mein **Backward Pass** hamesha overwriting se bachata hai.\nEdge cases (like last element being 0) ko carefully handle karna hota hai."
+        importantNotes: "Array shift problems mein **Backward Pass** hamesha overwriting se bachata hai. Edge cases (like last element being 0) ko carefully handle karna hota hai."
       },
       { 
         isMastery: true, 
@@ -313,8 +380,18 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Two Pointer (Fast-Slow)",
-            concept: "Hum ek `slow` pointer maintain karenge jo sirf 'non-val' elements ki position track karega. `fast` pointer poore array ko scan karega aur valid elements ko `slow` position par move karega.",
+            type: "Brute Force",
+            concept: "Naya array banao jisme target value (val) na ho.",
+            code: `def removeElement(nums, val):
+    temp = [x for x in nums if x != val]
+    for i in range(len(temp)):
+        nums[i] = temp[i]
+    return len(temp)`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Slow pointer ko 'write-head' ki tarah use karo jo sirf non-val elements ko likhega.",
             code: `def removeElement(nums, val):
     slow = 0
     for fast in range(len(nums)):
@@ -323,14 +400,14 @@ export const patternsData = [
             slow += 1
     return slow`,
             dryRun: [
-              "[STATE] nums=[3,2,2,3], val=3, slow=0, fast=0 [DESC] nums[0]==val. fast moves to 1.",
-              "[STATE] nums=[3,2,2,3], slow=0, fast=1 [DESC] nums[1]!=val. nums[0]=nums[1]. slow=1.",
-              "[STATE] nums=[2,2,2,3], slow=1, fast=2 [DESC] nums[2]!=val. nums[1]=nums[2]. slow=2."
+              "**Step 1: Found Match**<br>• **State:** nums=[3,2,2,3], val=3, slow=0, fast=0 (3)<br>• **Action:** nums[fast] is the target value. DO NOT write. increment fast.<br>• **Result:** slow=0, fast=1",
+              "**Step 2: Found Valid**<br>• **State:** slow=0, fast=1 (2)<br>• **Action:** 2 != 3. Write 2 at nums[slow]. Increment both.<br>• **Result:** nums=[2, 2, 2, 3], slow=1, fast=2",
+              "**Step 3: Finish**<br>• **Action:** After loop, slow represents the new length.<br>• **Result:** Returns 2"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "In-place removal problems ke liye **Two Pointer** (Read & Write) optimal hai.\nSlow pointer represents the length of the new valid array."
+        importantNotes: "In-place removal problems ke liye **Two Pointer** (Read & Write) optimal hai. Slow pointer represents the length of the new valid array."
       },
       { 
         isMastery: true, 
@@ -346,32 +423,34 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Two Pointer (Opposite)",
-            concept: "Hum dono ends se scan karenge. Agar character alphanumeric nahi hai, toh pointer skip kar denge. Phir compare karenge, agar matching nahi hai toh False return karenge.",
+            type: "Brute Force",
+            concept: "String ko pehle saaf (clean) karo aur fir check karo ki reverse karne par same hai ya nahi.",
+            code: `def isPalindrome(s):
+    cleaned = "".join(c.lower() for c in s if c.isalnum())
+    return cleaned == cleaned[::-1]`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Pointers ko ends se move karo aur non-alphanumeric characters ko skip karte jao.",
             code: `def isPalindrome(s):
     l, r = 0, len(s) - 1
-    
     while l < r:
-        if not s[l].isalnum():
-            l += 1
-        elif not s[r].isalnum():
-            r -= 1
+        if not s[l].isalnum(): l += 1
+        elif not s[r].isalnum(): r -= 1
         else:
-            if s[l].lower() != s[r].lower():
-                return False
-            l += 1
-            r -= 1
-            
+            if s[l].lower() != s[r].lower(): return False
+            l += 1; r -= 1
     return True`,
             dryRun: [
-              "[STATE] s='A man...', l=0, r=29 [DESC] 'A' and 'a' match. Move pointers.",
-              "[STATE] l=1 [DESC] ' ' is not alnum, skip. l=2.",
-              "[STATE] l=10, r=20 [DESC] Comparison continues until pointers meet."
+              "**Step 1: Start**<br>• **State:** s='A man, a canal...', L=0 ('A'), R=30 ('a')<br>• **Action:** 'A'.lower() == 'a'.lower(). Match! Move both pointers.<br>• **Result:** L=1, R=29",
+              "**Step 2: Skip Logic**<br>• **State:** L=1 (' '), R=29 (' ')<br>• **Action:** Both are spaces (not alnum). Skip them.<br>• **Result:** L=2 ('m'), R=28 ('m')",
+              "**Step 3: Match**<br>• **Action:** 'm' == 'm'. Continue until L and R meet in center.<br>• **Result:** True"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "`isalnum()` function non-alphabet characters ko skip karne ke liye useful hai.\nExtra memory (like creating a new string) se bachne ke liye **Two Pointer** use karein."
+        importantNotes: "`isalnum()` function non-alphabet characters ko skip karne ke liye useful hai. Extra memory (like creating a new string) se bachne ke liye **Two Pointer** use karein."
       },
       { 
         isMastery: true, 
@@ -387,25 +466,33 @@ export const patternsData = [
         ],
         solutions: [
           {
-            type: "Two Pointer",
-            concept: "Ek pointer `s` par aur ek `t` par rakho. Agar characters match hote hain, toh dono pointers aage badhayenge. Agar nahi, toh sirf `t` wala pointer move hoga.",
-            code: `def isSubsequence(s, s_target):
-    i, j = 0, 0
-    while i < len(s) and j < len(s_target):
-        if s[i] == s_target[j]:
-            i += 1
-        j += 1
-        
+            type: "Brute Force",
+            concept: "String `t` ki saari possible subsequences generate karo aur check karo ki `s` usme hai ya nahi. (Bahut slow!)",
+            code: `# This is conceptual; complexity is 2^N
+def isSubsequenceBF(s, t):
+    # Using recursive generation (not recommended)
+    pass`,
+            complexity: "Time: O(2^T), Space: O(T)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Ek pointer `s` ke liye rakho aur use tabhi aage badao jab `t` mein match mil jaye.",
+            code: `def isSubsequence(s, t):
+    i = j = 0
+    while i < len(s) and j < len(t):
+        if s[i] == t[j]:
+            i += 1 # Found match for current char of s
+        j += 1 # Always move pointer for t
     return i == len(s)`,
             dryRun: [
-              "[STATE] s='abc', t='ahbgdc', i=0, j=0 [DESC] s[0]=='a' matches t[0]. i=1, j=1.",
-              "[STATE] i=1, j=1 [DESC] s[1]=='b' doesn't match t[1]=='h'. j=2.",
-              "[STATE] i=1, j=2 [DESC] s[1]=='b' matches t[2]. i=2, j=3."
+              "**Step 1: Match**<br>• **State:** s='abc', t='ahbgdc', i=0 ('a'), j=0 ('a')<br>• **Action:** Match! move both pointers.<br>• **Result:** i=1 ('b'), j=1 ('h')",
+              "**Step 2: Skip**<br>• **State:** i=1 ('b'), j=1 ('h')<br>• **Action:** No match. Move j to find next 'b'.<br>• **Result:** i=1, j=2 ('b') -> Match! i=2, j=3",
+              "**Step 3: Finish**<br>• **Action:** i (3) reached len(s).<br>• **Result:** Return True"
             ],
             complexity: "Time: O(T), Space: O(1)"
           }
         ],
-        importantNotes: "Relative order maintain karne ke liye **Greedy matching** with Two Pointer optimal hai.\ni pointer agar `s` ki length tak pahuch gaya, matlab subsequence mil gayi."
+        importantNotes: "Relative order maintain karne ke liye **Greedy matching** with Two Pointer optimal hai. i pointer agar `s` ki length tak pahuch gaya, matlab subsequence mil gayi."
       },
       { 
         id: "q_2sum_ii",
@@ -449,70 +536,14 @@ export const patternsData = [
                 right -= 1 # Sum ghatane ke liye
         return []`,
             dryRun: [
-              "[STATE] left=0 (val 2), right=3 (val 15) | sum=17 [DESC] Initial state mein pointers ends par hain. **Sum (17) > target (9)**, isliye sum ghatane ke liye right pointer ko piche lao.",
-              "[STATE] left=0 (val 2), right=2 (val 11) | sum=13 [DESC] Abhi bhi **sum (13) > target (9)**, isliye right pointer ko aur piche lao (right--).",
-              "[STATE] left=0 (val 2), right=1 (val 7) | sum=9 [DESC] Yay! **Sum (9) == target (9)**. Humein hamara pair mil gaya. Question 1-based index mang raha hai, toh return karenge [1, 2]."
+              "**Step 1: Init Pointers**<br>• **Array State:** `[2, 7, 11, 15]`<br>• **Pointers:** `left=0` (2), `right=3` (15). Sum = 17.<br>• **Logic:** Sum (17) target (9) se bada hai, isliye hum `right` ko piche move karenge.",
+              "**Step 2: Moving Right**<br>• **Pointers:** `left=0` (2), `right=2` (11). Sum = 13.<br>• **Logic:** Abhi bhi bada hai, firse `right` ko piche move kiya.",
+              "**Step 3: Found Match**<br>• **Pointers:** `left=0` (2), `right=1` (7). Sum = **9!**<br>• **Result:** Return indices `[1, 2]`."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
         importantNotes: "• **What we learned:** Sorted array mein Two Pointers use karke hum O(N^2) ke brute force ko O(N) mein convert kar sakte hain.\n• **Where else to use:** Jab bhi target sum find karna ho aur array sorted ho (ya sort kiya ja sake)."
-      },
-      { 
-        id: "q_container_water",
-        difficulty: "M", 
-        name: "Container With Most Water", 
-        companies: ["Amazon", "Google", "Meta"],
-        link: "https://leetcode.com/problems/container-with-most-water/",
-        problemStatement: "You are given an integer array `height` of length `n`. Find two lines that together with the x-axis form a container, such that the container contains the most water.",
-        testCases: [
-          { input: "height = [1,8,6,2,5,4,8,3,7]", output: "49", explanation: "Max area is between index 1 (height 8) and index 8 (height 7). Width = 7, Min Height = 7. Area = 49." }
-        ],
-        solutions: [
-          {
-            type: "Brute Force",
-            concept: "Hum har possible pairs of lines (i, j) ko check karenge aur area calculate karenge: `area = (j - i) * min(height[i], height[j])`.",
-            code: `def maxAreaBrute(height):
-    max_area = 0
-    n = len(height)
-    for i in range(n):
-        for j in range(i + 1, n):
-            # Har possible container ka area check karo
-            current_area = (j - i) * min(height[i], height[j])
-            max_area = max(max_area, current_area)
-    return max_area`,
-            complexity: "Time: O(N^2), Space: O(1)"
-          },
-          {
-            type: "Optimal (Two Pointer)",
-            concept: "Hum **dono ends** se start karenge. Maximum area ke liye width aur height dono important hain. Width toh maximum tabhi hogi jab pointers dur honge. Jab hum pointers ko move karenge, toh hum hamesha **chhoti height** wali wall ko move karenge kyunki badi wall ko move karne se area kabhi badh nahi sakta (bottleneck hamesha chhoti wall hoti hai).",
-            code: `class Solution:
-    def maxArea(self, height: List[int]) -> int:
-        left, right = 0, len(height) - 1
-        max_area = 0
-        
-        while left < right:
-            # Current area calculate karo
-            width = right - left
-            h = min(height[left], height[right])
-            max_area = max(max_area, width * h)
-            
-            # Choti wall ko move karo taaki shayad aage badi wall mile
-            if height[left] < height[right]:
-                left += 1
-            else:
-                right -= 1
-                
-        return max_area`,
-            dryRun: [
-              "[STATE] L=0 (h=1), R=8 (h=7) | width=8, area=8 [DESC] Start mein pointers extreme ends par hain. Area = 8*min(1,7) = 8. Ab kyunki **left wall (1) choti hai**, hume use move karna chahiye taaki koi badi wall mile.",
-              "[STATE] L=1 (h=8), R=8 (h=7) | width=7, area=49 [DESC] Ab width 7 hai aur heights 8 aur 7 hain. Area = 7*min(8,7) = 49. Yeh humara naya **Max Area** hai. Ab **right wall (7) choti hai**, toh use move karenge (right--).",
-              "[STATE] L=1 (h=8), R=7 (h=3) | width=6, area=18 [DESC] Area = 6*min(8,3) = 18. Pichle max area (49) se chota hai. **Right wall (3) choti hai**, isliye right--."
-            ],
-            complexity: "Time: O(N), Space: O(1)"
-          }
-        ],
-        importantNotes: "• **What we learned:** Area hamesha **shorter wall** se limit hota hai. Isliye choti wall ko move karna hi logic banta hai kyunki badi wall ko move karne se width kam hogi aur area kabhi badh hi nahi sakta.\n• **Where else to use:** Trapping Rain Water aur isi tarah ke array optimization problems mein."
       },
       { 
         id: "q_3sum",
@@ -527,23 +558,13 @@ export const patternsData = [
         solutions: [
           {
             type: "Brute Force",
-            concept: "Hum **teen nested loops** chalayenge i, j, k ke liye aur check karenge sum 0 hai ya nahi. Duplicate results handle karne ke liye hum set ka use karenge.",
-            code: `def threeSumBrute(nums):
-    res = set()
-    n = len(nums)
-    for i in range(n):
-        for j in range(i + 1, n):
-            for k in range(j + 1, n):
-                if nums[i] + nums[j] + nums[k] == 0:
-                    # Sort triplet to avoid duplicate combinations in set
-                    triplet = tuple(sorted([nums[i], nums[j], nums[k]]))
-                    res.add(triplet)
-    return [list(t) for t in res]`,
-            complexity: "Time: O(N^3), Space: O(Triplets)"
+            concept: "Teen nested loops chalao (i, j, k) aur unique triplets dhoondo. O(N³) complexity.",
+            code: `# Triple nested loops + set to store unique triplets`,
+            complexity: "Time: O(N³), Space: O(Triplets)"
           },
           {
             type: "Optimal (Sort + 2Ptr)",
-            concept: "1. Pehle array ko **sort** kardo.\n2. Ek number `i` ko loop se fix karo.\n3. Ab bache hue array mein `left` aur `right` pointers se Two Sum II (target = -nums[i]) lagao.\n4. **Duplicates skip** karna mat bhulna (prev element same ho toh aage badho).",
+            concept: "Array sort karo, ek number `i` fix karo, aur bache huye array mein Two Sum sorted wala logic lagao.",
             code: `class Solution:
     def threeSum(self, nums: List[int]) -> List[List[int]]:
         res = []
@@ -569,14 +590,14 @@ export const patternsData = [
                     right -= 1
         return res`,
             dryRun: [
-              "[STATE] nums=[-4,-1,-1,0,1,2] | i=0 (val -4) [DESC] Pehle array sort kiya. i=-4 ke liye target sum (L+R) hona chahiye 4. Left=-1, Right=2. Sum=1 (<4), left++.",
-              "[STATE] i=1 (val -1) | left=2 (val -1), right=5 (val 2) [DESC] Ab target sum (L+R) hona chahiye 1. Left=-1, Right=2. **Sum = 1 == Target!** Triplet mil gaya: [-1, -1, 2].",
-              "[STATE] i=1 (val -1) | left=3 (val 0), right=5 (val 2) [DESC] Same 'i' ke liye aage badhe. Sum = -1+0+2 = 1. Ek aur triplet: [-1, 0, 1]."
+              "**Step 1: Sorting**<br>• **Array State:** `[-4, -1, -1, 0, 1, 2]`<br>• **Logic:** Pehle array ko sort kiya. Phir `i=0` (-4) ko fix kiya.<br>• **Pointers:** `L=1` (-1), `R=5` (2). Sum = -4 + (-1) + 2 = -3. Chota hai, L++.",
+              "**Step 2: Finding Triplet**<br>• **i Value:** `i=1` (-1). Humein bacha hua sum 1 chahiye.<br>• **Pointers:** `L=2` (-1), `R=5` (2). **Sum = 0!** Triplet: `[-1, -1, 2]` found.<br>• **Action:** Skip duplicate value for L and move pointers.",
+              "**Step 3: Another Match**<br>• **Pointers:** `L=3` (0), `R=4` (1). **Sum = 0!** Triplet: `[-1, 0, 1]` found."
             ],
             complexity: "Time: O(N^2), Space: O(log N) to O(N) for sorting"
           }
         ],
-        importantNotes: "• **What we learned:** Jab bhi humein triplets chahiye, hum ek variable ko fix karke problem ko 'Two Sum' mein reduce kar sakte hain. Duplicates handle karne ke liye sorting best hai.\n• **Where else to use:** 4Sum, k-Sum problems aur unique combinations find karne mein."
+        importantNotes: "• **What we learned:** Jab bhi humein triplets chahiye, hum ek variable ko fix karke problem ko 'Two Sum' mein reduce kar sakte hain. Duplicates handle karne ke liye sorting best hai.\n• **Sorted Array Benefit:** Sorted data mein Two Pointer O(N) mein solution de deta hai. Unsorted hota toh hum HashMap use karte."
       },
       { 
         id: "q_3sum_closest",
@@ -591,18 +612,17 @@ export const patternsData = [
         solutions: [
           {
             type: "Brute Force",
-            concept: "Same as 3Sum, teen loops se har triplet check karo aur target se distance (absolute difference) nikalte raho.",
-            code: `def threeSumClosestBrute(nums, target):
+            concept: "Teen nested loops chalao aur har triplet ka sum check karo target ke close.",
+            code: `def threeSumClosest(nums, target):
     closest_sum = float('inf')
-    n = len(nums)
-    for i in range(n):
-        for j in range(i + 1, n):
-            for k in range(j + 1, n):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            for k in range(j + 1, len(nums)):
                 curr_sum = nums[i] + nums[j] + nums[k]
                 if abs(target - curr_sum) < abs(target - closest_sum):
                     closest_sum = curr_sum
     return closest_sum`,
-            complexity: "Time: O(N^3), Space: O(1)"
+            complexity: "Time: O(N³), Space: O(1)"
           },
           {
             type: "Optimal (Sort + 2Ptr)",
@@ -633,7 +653,7 @@ export const patternsData = [
             complexity: "Time: O(N^2), Space: O(1)"
           }
         ],
-        importantNotes: "• **What we learned:** Jab humein 'exact target' nahi milta, tab humein 'absolute difference' ko minimize karna hota hai. Two pointers se hum target ke close pahunch sakte hain.\n• **Where else to use:** K-closest numbers, target sum closest problems mein."
+        importantNotes: "• **Distance logic:** Jab humein 'exact sum' nahi milta, tab hum target aur sum ke 'absolute difference' ko minimize karte hain."
       },
       { 
         id: "q_4sum",
@@ -648,13 +668,13 @@ export const patternsData = [
         solutions: [
           {
             type: "Brute Force",
-            concept: "Chaar (4) nested loops chalayenge. O(N^4) complexity hogi.",
+            concept: "Chaar nested loops (i, j, k, l) chalao aur unique triplets dhoondo. O(N⁴) complexity.",
             code: `# Four nested loops (i, j, k, l) + set to handle duplicates.`,
-            complexity: "Time: O(N^4), Space: O(Quadruplets)"
+            complexity: "Time: O(N⁴), Space: O(Quadruplets)"
           },
           {
             type: "Optimal (Sort + 2Ptr)",
-            concept: "3Sum ka extension hai. **Do loops** (i aur j) se do numbers fix karo, fir baaki do numbers ke liye Two Pointer lagao. Time complexity O(N^3) ho jayegi.",
+            concept: "3Sum ka advanced version. Do numbers fix karo aur baaki do ke liye Two Pointer lagao. Time O(N³) ho jayegi.",
             code: `class Solution:
     def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
         nums.sort()
@@ -685,34 +705,500 @@ export const patternsData = [
             complexity: "Time: O(N^3), Space: O(1)"
           }
         ],
-        importantNotes: "• **What we learned:** Higher order sum problems (4Sum, 5Sum etc.) ko hum nested loops + two pointers se handle kar sakte hain. Time complexity hamesha O(N^(k-1)) hogi.\n• **Where else to use:** Any k-Sum problem, unique quadruple selection tasks."
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono ends se pointers chalao. Jo wall choti hai, wahan se water trap hone ka chance hota hai.",
+            code: `def trap(height):
+    if not height: return 0
+    l, r = 0, len(height) - 1
+    l_max = r_max = res = 0
+    while l < r:
+        if height[l] < height[r]:
+            if height[l] >= l_max: l_max = height[l]
+            else: res += l_max - height[l]
+            l += 1
+        else:
+            if height[r] >= r_max: r_max = height[r]
+            else: res += r_max - height[r]
+            r -= 1
+    return res`,
+            dryRun: [
+              "**Step 1: Start**<br>• **State:** height=[0,1,0,2...], L=0 (0), R=11 (1)<br>• **Action:** 0 < 1. move L pointer. l_max update to 0.<br>• **Result:** res=0, L=1",
+              "**Step 2: Trap Water**<br>• **State:** L=2 (0), l_max=1<br>• **Action:** height[2] (0) < l_max (1). Water trap! 1 - 0 = 1.<br>• **Result:** res = 1, L=3"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Hinglish Tip:** Bottleneck hamesha choti wall hoti hai. Isliye pointers ko small wall se move karte hain."
       },
-      { difficulty: "E", name: "Valid Palindrome", companies: ["Meta", "Microsoft", "Amazon"] },
-      { difficulty: "E", name: "Valid Palindrome II", companies: ["Meta", "Google"] },
-      { difficulty: "H", name: "Trapping Rain Water", companies: ["Google", "Amazon", "Microsoft", "Meta"] },
-      { difficulty: "E", name: "Remove Duplicates from Sorted Array", companies: ["Microsoft", "Adobe"] },
-      { difficulty: "M", name: "Sort Colors (Dutch Flag)", companies: ["Microsoft", "Amazon", "Adobe"] },
-      { difficulty: "E", name: "Move Zeroes", companies: ["Meta", "Bloomberg", "Microsoft"] },
-      { difficulty: "E", name: "Remove Element", companies: ["Adobe", "Amazon"] },
-      { difficulty: "E", name: "Squares of Sorted Array", companies: ["Google", "Amazon"] },
-      { difficulty: "M", name: "Boats to Save People", companies: ["Amazon"] },
-      { difficulty: "E", name: "Backspace String Compare", companies: ["Google", "Amazon", "Microsoft"] },
-      { difficulty: "E", name: "Intersection of Two Arrays II", companies: ["Google", "Amazon", "Microsoft"] },
-      { difficulty: "M", name: "Minimum Difference Between Highest and Lowest", companies: ["Amazon", "Google"] },
-      { difficulty: "M", name: "Longest Mountain in Array", companies: ["Amazon", "Google"] },
-      { difficulty: "M", name: "Count Pairs Whose Sum is Less Than Target", companies: ["Amazon"] },
-      { difficulty: "M", name: "Push Dominoes", companies: ["Google", "Amazon"] },
-      { difficulty: "M", name: "Partition Array Such That Max Diff is K", companies: ["Amazon"] },
-      { difficulty: "H", name: "Minimum Window Subsequence", companies: ["Google", "Amazon"] },
-      { difficulty: "M", name: "Number of Subsequences with Sum ≤ Target", companies: ["Amazon", "Google"] },
-      { difficulty: "M", name: "Reverse Words in a String", companies: ["Amazon", "Microsoft", "Apple"] },
-      { difficulty: "E", name: "Two Sum (using sorted + two ptr variant)", companies: ["Amazon", "Google"] },
-      { difficulty: "M", name: "Max Number of K-Sum Pairs", companies: ["Amazon", "Google"] },
-      { difficulty: "M", name: "Find K Closest Elements", companies: ["Amazon", "Google", "Microsoft"] },
-      { difficulty: "M", name: "Make String a Subsequence Using Cyclic Increments", companies: ["Google"] },
-      { difficulty: "E", name: "Is Subsequence", companies: ["Amazon", "Google", "Adobe"] },
-      { difficulty: "M", name: "Minimum Length of String After Deleting Similar Ends", companies: ["Amazon"] },
-      { difficulty: "H", name: "Minimum Operations to Reduce X to Zero", companies: ["Amazon", "Google"] }
+      {
+        id: "q_rem_dups",
+        difficulty: "E",
+        name: "Remove Duplicates from Sorted Array",
+        companies: ["Microsoft", "Adobe"],
+        link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+        problemStatement: "Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once.",
+        testCases: [
+          { input: "nums = [1,1,2]", output: "2, nums = [1,2,_]" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Ek extra Set ya List use karo unique elements store karne ke liye, fir unhe original array mein wapas copy kardo.",
+            code: `def removeDuplicates(nums):
+    unique = sorted(list(set(nums)))
+    for i in range(len(unique)):
+        nums[i] = unique[i]
+    return len(unique)`,
+            complexity: "Time: O(N log N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Array sorted hai, iska fayda uthao! `slow` pointer unique element rakhega aur `fast` pointer naye element dhundega.",
+            code: `def removeDuplicates(nums):
+    if not nums: return 0
+    slow = 0
+    for fast in range(1, len(nums)):
+        if nums[fast] != nums[slow]:
+            slow += 1
+            nums[slow] = nums[fast]
+    return slow + 1`,
+            dryRun: [
+              "**Step 1: Init**<br>• **State:** nums=[1, 1, 2], slow=0 (val 1), fast=1 (val 1)<br>• **Action:** Dono same hain, skip write. fast aage badho.<br>• **Result:** slow=0, fast=2",
+              "**Step 2: New Unique**<br>• **State:** fast=2 (val 2)<br>• **Action:** 2 != 1. slow ko 1 par lao aur wahan 2 likh do.<br>• **Result:** nums=[1, 2, 2], slow=1"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Hinglish Logic:** Sorted array mein duplicates hamesha padosi (neighbors) hote hain. Bas `nums[slow]` aur `nums[fast]` ko compare karo."
+      },
+      {
+        id: "q_sort_colors",
+        difficulty: "M",
+        name: "Sort Colors (Dutch Flag)",
+        companies: ["Microsoft", "Amazon", "Adobe"],
+        link: "https://leetcode.com/problems/sort-colors/",
+        problemStatement: "Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue (0, 1, and 2).",
+        testCases: [
+          { input: "nums = [2,0,2,1,1,0]", output: "[0,0,1,1,2,2]" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Pehle counts nikal lo kitne 0s, 1s, aur 2s hain. Fir array ko un counts ke hisaab se overwrite kardo.",
+            code: `def sortColors(nums):
+    counts = {0: 0, 1: 0, 2: 0}
+    for n in nums: counts[n] += 1
+    i = 0
+    for color in [0, 1, 2]:
+        for _ in range(counts[color]):
+            nums[i] = color
+            i += 1`,
+            complexity: "Time: O(N), Space: O(1)"
+          },
+          {
+            type: "Optimal (3 Pointer)",
+            concept: "Teen pointers use karo: `low` (for 0s), `mid` (for current), aur `high` (for 2s). Isse single pass mein sort ho jayega.",
+            code: `def sortColors(nums):
+    low, mid, high = 0, 0, len(nums) - 1
+    while mid <= high:
+        if nums[mid] == 0:
+            nums[low], nums[mid] = nums[mid], nums[low]
+            low += 1; mid += 1
+        elif nums[mid] == 1:
+            mid += 1
+        else:
+            nums[high], nums[mid] = nums[mid], nums[high]
+            high -= 1`,
+            dryRun: [
+              "**Step 1: Found 2**<br>• **State:** nums=[2,0,1], low=0, mid=0 (2), high=2<br>• **Action:** 2 ko `high` ke saath swap karo. high moves to 1.<br>• **Result:** nums=[1,0,2], mid=0, high=1",
+              "**Step 2: Found 1**<br>• **State:** mid=0 (1)<br>• **Action:** 1 correct position par hai (temporarily). mid aage badao.<br>• **Result:** mid=1",
+              "**Step 3: Found 0**<br>• **State:** mid=1 (0)<br>• **Action:** 0 ko `low` ke saath swap karo. low++, mid++.<br>• **Result:** nums=[0,1,2]"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Logic Zone:** Isse Dutch National Flag algorithm kehte hain. Mid pointer poore array ko scan karta hai."
+      },
+      {
+        id: "q_move_zeroes",
+        difficulty: "E",
+        name: "Move Zeroes",
+        companies: ["Meta", "Bloomberg", "Microsoft"],
+        link: "https://leetcode.com/problems/move-zeroes/",
+        problemStatement: "Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.",
+        testCases: [
+          { input: "nums = [0,1,0,3,12]", output: "[1,3,12,0,0]" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Naya array banao, pehle saare non-zero elements daalo, fir bache hue space mein zero bhar do.",
+            code: `def moveZeroes(nums):
+    non_zeros = [x for x in nums if x != 0]
+    for i in range(len(nums)):
+        if i < len(non_zeros): nums[i] = non_zeros[i]
+        else: nums[i] = 0`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Swapping technique use karo. `last_non_zero` pointer track karega ki agla non-zero element kahan aana chahiye.",
+            code: `def moveZeroes(nums):
+    last_non_zero = 0
+    for i in range(len(nums)):
+        if nums[i] != 0:
+            nums[last_non_zero], nums[i] = nums[i], nums[last_non_zero]
+            last_non_zero += 1`,
+            dryRun: [
+              "**Step 1: Found Zero**<br>• **State:** nums=[0, 1, 0, 3], i=0<br>• **Action:** 0 mila, skip kardo.<br>• **Result:** last_non_zero=0",
+              "**Step 2: Swap!**<br>• **State:** i=1 (val 1), last_non_zero=0<br>• **Action:** 1 ko index 0 ke saath swap karo. last_non_zero moves to 1.<br>• **Result:** nums=[1, 0, 0, 3]"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Pro Tip:** In-place swap karne se relative order maintain rehta hai automatically."
+      },
+      {
+        id: "q_sq_sorted",
+        difficulty: "E",
+        name: "Squares of Sorted Array",
+        companies: ["Google", "Amazon"],
+        link: "https://leetcode.com/problems/squares-of-a-sorted-array/",
+        problemStatement: "Given an integer array nums sorted in non-decreasing order, return an array of the squares of each number sorted in non-decreasing order.",
+        testCases: [
+          { input: "nums = [-4,-1,0,3,10]", output: "[0,1,9,16,100]" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Pehle saare numbers ka square nikal lo, fir result array ko sort kardo.",
+            code: `def sortedSquares(nums):
+    res = [x*x for x in nums]
+    res.sort()
+    return res`,
+            complexity: "Time: O(N log N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono ends se absolute value compare karo. Jo badi hai, uska square result array ke 'end' mein daalo.",
+            code: `def sortedSquares(nums):
+    n = len(nums)
+    res = [0] * n
+    l, r = 0, n - 1
+    for i in range(n - 1, -1, -1):
+        if abs(nums[l]) > abs(nums[r]):
+            res[i] = nums[l] ** 2
+            l += 1
+        else:
+            res[i] = nums[r] ** 2
+            r -= 1
+    return res`,
+            dryRun: [
+              "**Step 1: Compare Ends**<br>• **State:** nums=[-4, -1, 0, 3], L=0 (-4), R=3 (3)<br>• **Action:** |-4| (4) > |3| (3). (-4)^2 = 16 ko last index par daalo. L pointer aage badao.<br>• **Result:** res=[_, _, _, 16], L=1",
+              "**Step 2: Next Largest**<br>• **State:** L=1 (-1), R=3 (3)<br>• **Action:** |3| > |-1|. 3^2 = 9 ko index 2 par daalo. R pointer peeche lao.<br>• **Result:** res=[_, _, 9, 16]"
+            ],
+            complexity: "Time: O(N), Space: O(N)"
+          }
+        ],
+        importantNotes: "• **Logic Hint:** Sorted array mein squares ki sabse badi values hamesha 'ends' par hoti hain."
+      },
+      {
+        id: "q_rem_elem_practice",
+        difficulty: "E",
+        name: "Remove Element",
+        companies: ["Adobe", "Amazon"],
+        link: "https://leetcode.com/problems/remove-element/",
+        problemStatement: "Given an integer array nums and an integer val, remove all occurrences of val in nums in-place. The order of the elements may be changed.",
+        testCases: [
+          { input: "nums = [3,2,2,3], val = 3", output: "2, nums = [2,2,_,_]" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Ek naya array banao aur usme sirf wahi elements daalo jo `val` ke equal nahi hain.",
+            code: `def removeElement(nums, val):
+    res = [x for x in nums if x != val]
+    for i in range(len(res)): nums[i] = res[i]
+    return len(res)`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Write head (`slow`) ko tracking ke liye use karo. Jab bhi koi valid element mile, use `slow` par likh do.",
+            code: `def removeElement(nums, val):
+    slow = 0
+    for fast in range(len(nums)):
+        if nums[fast] != val:
+            nums[slow] = nums[fast]
+            slow += 1
+    return slow`,
+            dryRun: [
+              "**Step 1: Match**<br>• **State:** nums=[3, 2], val=3, slow=0, fast=0 (3)<br>• **Action:** 3 matches val! Skip writing.<br>• **Result:** slow=0",
+              "**Step 2: Copy**<br>• **State:** fast=1 (2)<br>• **Action:** 2 is valid! Write it at nums[slow=0]. slow++.<br>• **Result:** nums=[2, 2], slow=1"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Key point:** Slow pointer hamesha new array ki current length batata hai."
+      },
+      {
+        id: "q_rem_dups_ii",
+        difficulty: "M",
+        name: "Remove Duplicates from Sorted Array II",
+        companies: ["Meta", "Amazon"],
+        link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/",
+        problemStatement: "Given an integer array nums sorted in non-decreasing order, remove some duplicates in-place such that each unique element appears at most twice.",
+        testCases: [
+          { input: "nums = [1,1,1,2,2,3]", output: "5, nums = [1,1,2,2,3,_]" }
+        ],
+        solutions: [
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Har element ko tabhi select karo jab woh apne 'pichle-se-pichle' element (slow-2) se alag ho.",
+            code: `def removeDuplicates(nums):
+    if len(nums) <= 2: return len(nums)
+    slow = 2
+    for fast in range(2, len(nums)):
+        if nums[fast] != nums[slow - 2]:
+            nums[slow] = nums[fast]
+            slow += 1
+    return slow`,
+            dryRun: [
+              "**Step 1: Duplicate Found**<br>• **State:** nums=[1,1,1,2], slow=2, fast=2 (val 1)<br>• **Action:** nums[2] (1) matches nums[slow-2] (1). 3rd occurrence! Skip.<br>• **Result:** slow=2",
+              "**Step 2: Valid Element**<br>• **State:** fast=3 (val 2)<br>• **Action:** 2 != nums[slow-2] (1). write 2 at slow index. slow++.<br>• **Result:** nums=[1,1,2,2], slow=3"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Advanced Tip:** `slow - K` logic se hum 'at most K' duplicates handle kar sakte hain."
+      },
+      { 
+        isMastery: true, 
+        id: "m_backspace_compare",
+        difficulty: "E", 
+        name: "Backspace String Compare", 
+        companies: ["Google", "Amazon", "Microsoft"], 
+        link: "https://leetcode.com/problems/backspace-string-compare/",
+        problemStatement: "Given two strings `s` and `t`, return `true` if they are equal when both are typed into empty text editors. `#` means a backspace character.",
+        testCases: [
+          { input: 's = "ab#c", t = "ad#c"', output: "true" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Process both strings fully using a stack (or list) to simulate backspaces.",
+            code: `def backspaceCompare(s, t):
+    def process(string):
+        res = []
+        for char in string:
+            if char != '#': res.append(char)
+            elif res: res.pop()
+        return "".join(res)
+    return process(s) == process(t)`,
+            complexity: "Time: O(N+M), Space: O(N+M)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Iterate backwards and keep track of pending backspaces to skip characters.",
+            code: `def backspaceCompare(s, t):
+    def get_valid_idx(string, idx):
+        skip = 0
+        while idx >= 0:
+            if string[idx] == '#':
+                skip += 1
+            elif skip > 0:
+                skip -= 1
+            else:
+                break
+            idx -= 1
+        return idx
+        
+    i, j = len(s) - 1, len(t) - 1
+    while i >= 0 or j >= 0:
+        i = get_valid_idx(s, i)
+        j = get_valid_idx(t, j)
+        
+        if i >= 0 and j >= 0:
+            if s[i] != t[j]: return False
+        elif (i >= 0) != (j >= 0):
+            # One string ended but the other didn't
+            return False
+        i -= 1; j -= 1
+    return True`,
+            dryRun: [
+              "**Step 1: Process Backwards**<br>• s='ab#c', t='ad#c'. Both have 'c' at end. Match.",
+              "**Step 2: Handle Backspace**<br>• s has '#' then 'b'. 'b' is skipped. Next valid is 'a'.",
+              "**Step 3: Compare Final**<br>• Both strings have 'a' remaining. Match! Return True."
+            ],
+            complexity: "Time: O(N+M), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Key Takeaway:** Processing strings from the end is often better when handling backspaces as it allows us to 'know' which characters will be deleted before we reach them."
+      },
+      { 
+        isMastery: true, 
+        id: "m_intersect_ii",
+        difficulty: "E", 
+        name: "Intersection of Two Arrays II", 
+        companies: ["Google", "Amazon", "Microsoft"], 
+        link: "https://leetcode.com/problems/intersection-of-two-arrays-ii/",
+        problemStatement: "Given two integer arrays `nums1` and `nums2`, return an array of their intersection. Each element in the result must appear as many times as it shows in both arrays.",
+        testCases: [
+          { input: "nums1 = [1,2,2,1], nums2 = [2,2]", output: "[2,2]" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Use a Hash Map (Dictionary) to count occurrences in one array, then check against the second array.",
+            code: `def intersect(nums1, nums2):
+    counts = {}
+    for n in nums1: counts[n] = counts.get(n, 0) + 1
+    res = []
+    for n in nums2:
+        if counts.get(n, 0) > 0:
+            res.append(n)
+            counts[n] -= 1
+    return res`,
+            complexity: "Time: O(N+M), Space: O(min(N,M))"
+          },
+          {
+            type: "Optimal (Sort + 2Ptr)",
+            concept: "Sort both and move pointers based on comparison. Equal values are added to result.",
+            code: `def intersect(nums1, nums2):
+    nums1.sort(); nums2.sort()
+    i = j = 0
+    res = []
+    while i < len(nums1) and j < len(nums2):
+        if nums1[i] == nums2[j]:
+            res.append(nums1[i])
+            i += 1; j += 1
+        elif nums1[i] < nums2[j]:
+            i += 1
+        else:
+            j += 1
+    return res`,
+            dryRun: [
+              "**Step 1: Match**<br>• nums1=[1,2,2,1], nums2=[2,2]. Sorted: [1,1,2,2], [2,2].",
+              "**Step 2: Searching**<br>• i=0 (1), j=0 (2). 1 < 2, move i to 1. Still 1 < 2, move i to 2 (val 2).",
+              "**Step 3: Collect**<br>• i=2 (2), j=0 (2). Match! Add 2. i=3, j=1. Match! Add 2."
+            ],
+            complexity: "Time: O(N log N + M log M), Space: O(min(N,M))"
+          }
+        ],
+        importantNotes: "• **Key Takeaway:** If the arrays are already sorted, Two Pointers is the most space-efficient way to find the intersection. If not, a Hash Map is generally faster."
+      },
+      { 
+        isMastery: true, 
+        id: "m_rev_words",
+        difficulty: "M", 
+        name: "Reverse Words in a String", 
+        companies: ["Amazon", "Microsoft", "Apple"], 
+        link: "https://leetcode.com/problems/reverse-words-in-a-string/",
+        problemStatement: "Given an input string `s`, reverse the order of the words.",
+        testCases: [
+          { input: 's = "the sky is blue"', output: '"blue is sky the"' }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Split the string into words, reverse the list of words, and join them with spaces.",
+            code: `def reverseWords(s):
+    # s.split() handles multiple spaces automatically
+    words = s.split()
+    words.reverse()
+    return " ".join(words)`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Reverse the entire string, then reverse each word in-place while handling spaces. (Conceptual in Python due to immutability).",
+            code: `def reverseWords(s):
+    # Python strings are immutable, so splitting is usually optimal.
+    # A true two-pointer approach would involve a deque.
+    from collections import deque
+    l, r = 0, len(s) - 1
+    while l <= r and s[l] == ' ': l += 1
+    while l <= r and s[r] == ' ': r -= 1
+    
+    d, word = deque(), []
+    while l <= r:
+        if s[l] == ' ' and word:
+            d.appendleft("".join(word))
+            word = []
+        elif s[l] != ' ':
+            word.append(s[l])
+        l += 1
+    d.appendleft("".join(word))
+    return " ".join(d)`,
+            dryRun: [
+              "**Step 1: Trim**<br>• '  hello world  ' -> 'hello world'.",
+              "**Step 2: Collect Word**<br>• Find 'hello', push to front of deque: ['hello'].",
+              "**Step 3: Finish**<br>• Find 'world', push to front: ['world', 'hello']. Join them."
+            ],
+            complexity: "Time: O(N), Space: O(N)"
+          }
+        ],
+        importantNotes: "• **Key Takeaway:** In Python, <code>split()</code> and <code>join()</code> are highly optimized. For a pure Two-Pointer approach, you would reverse the whole string and then reverse each word."
+      },
+      { 
+        isMastery: true, 
+        id: "m_boats",
+        difficulty: "M", 
+        name: "Boats to Save People", 
+        companies: ["Amazon"], 
+        link: "https://leetcode.com/problems/boats-to-save-people/",
+        problemStatement: "You are given an array `people` where `people[i]` is the weight of the i-th person, and an infinite number of boats where each boat can carry a maximum weight of `limit`. Each boat carries at most two people at the same time.",
+        testCases: [
+          { input: "people = [3,2,2,1], limit = 3", output: "3", explanation: "(1,2), (2), (3)" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Try every pair of people to see if they fit in a boat. (Complexity would be factorial/exponential).",
+            code: `# This is conceptually extremely slow.
+# Practically, even a BF for this needs sorting.`,
+            complexity: "Time: O(N!), Space: O(N)"
+          },
+          {
+            type: "Optimal (Sort + 2Ptr)",
+            concept: "Pair the heaviest person with the lightest person if their weight is within the limit.",
+            code: `def numRescueBoats(people, limit):
+    people.sort()
+    l, r = 0, len(people) - 1
+    boats = 0
+    while l <= r:
+        # Heaviest always takes a boat
+        # Can the lightest person join?
+        if people[l] + people[r] <= limit:
+            l += 1 # Lightest person joins
+        r -= 1 # Heaviest person moves on
+        boats += 1
+    return boats`,
+            dryRun: [
+              "**Step 1: Pair**<br>• people=[1,2,2,3], limit=3. L=0 (1), R=3 (3). 1+3=4 > 3. Heavy (3) goes alone. boats=1, R=2.",
+              "**Step 2: Success**<br>• L=0 (1), R=2 (2). 1+2=3 <= 3. Both go! boats=2, L=1, R=1.",
+              "**Step 3: Last**<br>• L=1 (2), R=1 (2). Last person goes. boats=3."
+            ],
+            complexity: "Time: O(N log N), Space: O(log N)"
+          }
+        ],
+        importantNotes: "• **Key Takeaway:** Sorting allows us to greedily pair the heaviest with the lightest, maximizing the utilization of each boat's capacity."
+      }
+    ],
+    conceptBoosters: [
+      {
+        q: "Opposite Direction Two Pointer kaise kaam karta hai?",
+        a: "Isme hum ek pointer `left=0` aur dusra `right=n-1` par rakhte hain. Sorted array mein agar humein sum badhana ho toh hum `left++` karte hain (kyunki right side badi values hain). Agar sum kam karna ho toh `right--` karte hain. Yeh simple logic O(N^2) ko O(N) bana deta hai."
+      },
+      {
+        q: "Same Direction (Fast & Slow) pointer kab use karein?",
+        a: "Jab humein array ko in-place modify karna ho (jaise duplicates hatana ya zeroes move karna). Ek pointer (`fast`) array scan karta hai aur dusra (`slow`) valid elements ki position track karta hai."
+      },
+      {
+        q: "Two Sum sorted wala dry run logic samjhao.",
+        a: "Input: `[2, 7, 11, 15]`, Target: 9<br>1. **Step 1:** `L=2, R=15` -> Sum=17 (>9). 17 target se bada hai, isliye humein sum kam karna hoga. Sorted array mein right side badi values hoti hain, toh R ko piche (left) move kiya.<br>2. **Step 2:** `L=2, R=11` -> Sum=13 (>9). Abhi bhi sum bada hai, firse R को piche move kiya.<br>3. **Step 3:** `L=2, R=7` -> Sum=9 (Match!). Answer mil gaya: `[1, 2]`."
+      }
     ]
   },
   {
@@ -758,6 +1244,10 @@ export const patternsData = [
           {
             type: "Optimal (Fixed Window)",
             concept: "Hum `k` size ki **Fixed Window** banayenge. Pehle pehli window ka sum nikalenge, fir window ko aage shift karte waqt agla element add aur pichla element remove karenge. Isse har window ka sum **O(1)** mein mil jayega.",
+            dryRun: [
+              "**Step 1: Fix First**<br>• **State:** nums=[-1, 0, 1, 2, -1, -4], Sorted=[-4, -1, -1, 0, 1, 2], i=1 (-1)<br>• **Action:** L=2 (-1), R=5 (2). Sum = -1 + (-1) + 2 = 0. Match! Add to res.<br>• **Result:** res=[[-1,-1,2]]",
+              "**Step 2: Move and Skip**<br>• **State:** L moves to 3 (0), R moves to 4 (1).<br>• **Action:** Sum = -1 + 0 + 1 = 0. Match! Add to res.<br>• **Result:** res=[[-1,-1,2], [-1,0,1]]"
+            ],
             code: `def findMaxAverage(nums, k):
     # Pehli window ka sum
     curr_sum = sum(nums[:k])
@@ -769,11 +1259,6 @@ export const patternsData = [
         max_sum = max(max_sum, curr_sum)
         
     return max_sum / k`,
-            dryRun: [
-              "[STATE] nums=[1,12,-5,-6,50,3], k=4, curr_sum=2 [DESC] Pehli window [1,12,-5,-6] ka sum = 2.",
-              "[STATE] i=4, next_val=50, prev_val=1 [DESC] Window shift: 2 + 50 - 1 = 51. max_sum update to 51.",
-              "[STATE] i=5, next_val=3, prev_val=12 [DESC] Window shift: 51 + 3 - 12 = 42. Final max_avg = 51/4 = 12.75."
-            ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
@@ -890,9 +1375,9 @@ export const patternsData = [
             
     return count`,
             dryRun: [
-              "[STATE] num=240, k=2, s='240' [DESC] i=0: substring '24'. 240 % 24 == 0. count = 1.",
-              "[STATE] i=1: substring '40'. 240 % 40 == 0. count = 2.",
-              "[STATE] Done. Result = 2."
+              "**Step 1: First Window**<br>• **State:** `num=240`, `k=2`, `s='240'`<br>• **Window:** i=0 (val '24'). 240 % 24 == 0. **Count = 1**.",
+              "**Step 2: Second Window**<br>• **Window:** i=1 (val '40'). 240 % 40 == 0. **Count = 2**.",
+              "**Step 3: End**<br>• **Result:** Final count is 2."
             ],
             complexity: "Time: O(N), Space: O(N) to store string"
           }
@@ -931,9 +1416,9 @@ export const patternsData = [
         
     return score`,
             dryRun: [
-              "[STATE] cal=[1,2,3...], k=1, lower=3, upper=3 [DESC] Window size 1. Day 1 sum=1. 1 < 3, score = -1.",
-              "[STATE] i=1, val=2 [DESC] New window sum=2. 2 < 3, score = -1 + (-1) = -2.",
-              "[STATE] i=2, val=3 [DESC] New window sum=3. 3 matches range, score = -2 + 0 = -2."
+              "**Step 1: Init Window**<br>• **Array State:** `[1, 2, 3, 4, 5]`<br>• **Pointers:** `k=1`, `sum=1`. score = -1 (since 1 < 3).",
+              "**Step 2: Slide 1**<br>• **State:** `sum=2` (new element 2, removed 1).<br>• **Compare:** 2 < 3, toh `score = -1 + (-1) = -2`.",
+              "**Step 3: Slide 2**<br>• **State:** `sum=3` (new 3, removed 2).<br>• **Compare:** 3 == range, `score = -2 + 0 = -2`."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
@@ -955,6 +1440,9 @@ export const patternsData = [
           {
             type: "Divide & Conquer (Sliding Window Variant)",
             concept: "Hum poori string ko check karenge. Agar koi aisa character milta hai jiska uppercase ya lowercase missing hai, toh woh character kisi bhi 'nice' substring ka part nahi ho sakta. Hum string ko us point par split karke dono sides check karenge.",
+            dryRun: [
+              "**Step 1: Pair Found**<br>• **State:** nums=[2, 7, 11, 15], Target=9, L=0 (2), R=1 (7)<br>• **Action:** 2+7=9. Perfect Match!<br>• **Result:** Returns indices [1, 2]"
+            ],
             code: `def longestNiceSubstring(s):
     if len(s) < 2: return ""
     
@@ -968,9 +1456,9 @@ export const patternsData = [
             
     return s`,
             dryRun: [
-              "[STATE] s='YazaAay', char_set={Y,a,z,A,y} [DESC] 'Y' (idx 0) ka lowercase 'y' set mein hai. 'a' (idx 1) ka 'A' bhi hai. 'z' (idx 2) ka 'Z' missing hai!",
-              "[STATE] Split at 'z': s1='Ya', s2='aAay' [DESC] 'Ya' is not nice. 'aAay' split again at 'y' because 'Y' is missing in this substring.",
-              "[STATE] Result = 'aAa' [DESC] Longest found nice substring."
+              "**Step 1: Check String**<br>• **State:** `s='YazaAay'`, `char_set={Y,a,z,A,y}`<br>• **Logic:** 'z' (idx 2) ka lowercase 'Z' missing hai! Humein yahan se split karna hoga.",
+              "**Step 2: Split Logic**<br>• **Split:** `s1='Ya'`, `s2='aAay'`<br>• **Recursive Call:** 'Ya' nice nahi hai. 'aAay' ko check kiya.",
+              "**Step 3: Found Result**<br>• **Result:** 'aAa' is the longest nice substring found."
             ],
             complexity: "Time: O(N^2) in worst case, Space: O(N) for recursion"
           }
@@ -1008,9 +1496,9 @@ export const patternsData = [
                 
     return count`,
             dryRun: [
-              "[STATE] s='aeiouu', i=0 [DESC] Substrings starting at 0: 'aeiou' (valid), 'aeiouu' (valid). count = 2.",
-              "[STATE] i=1 [DESC] 'eiouu' (only 4 distinct vowels). invalid.",
-              "[STATE] Done. Total = 2."
+              "**Step 1: Check Window**<br>• **State:** `s='aeiouu'`, `i=0`<br>• **Action:** Index 0 se start hone wali substrings: 'aeiou' (saare vowels hain) aur 'aeiouu'. **Count = 2**.",
+              "**Step 2: Next i**<br>• **State:** `i=1` (char 'e'). Substring 'eiouu' mein 'a' missing hai. Invalid.",
+              "**Step 3: End**<br>• **Result:** Total 2 substrings beautiful hain."
             ],
             complexity: "Time: O(N^2), Space: O(1)"
           }
@@ -1048,9 +1536,9 @@ export const patternsData = [
             
     return res`,
             dryRun: [
-              "[STATE] n=9, k=3, window=7 [DESC] Pehli window [7,4,3,9,1,8,5] sum=37. res[3]=37//7 = 5.",
-              "[STATE] Slide: 37 - nums[0] + nums[7] = 37 - 7 + 2 = 32. res[4]=32//7 = 4.",
-              "[STATE] Final result: [-1, -1, -1, 5, 4, 4, -1, -1, -1]."
+              "**Step 1: First Radius**<br>• **Array State:** `[7, 4, 3, 9, 1, 8, 5]` (First 7 elements)<br>• **State:** Sum = 37. `res[3] = 37 // 7 = 5`.",
+              "**Step 2: Slide Window**<br>• **State:** `Sum = 37 - 7 + 2 = 32`. `res[4] = 32 // 7 = 4`.",
+              "**Step 3: Final Array**<br>• **Array State:** `[-1, -1, -1, 5, 4, 4, -1, -1, -1]`."
             ],
             complexity: "Time: O(N), Space: O(N) for result"
           }
@@ -1086,9 +1574,9 @@ export const patternsData = [
             
     return count`,
             dryRun: [
-              "[STATE] k=3, threshold=4, target=12 [DESC] Window 1 [2,2,2] sum=6 (<12). count=0.",
-              "[STATE] Slide to [2,5,5] sum=12 (>=12). count=1.",
-              "[STATE] Slide to [5,5,5] sum=15 (>=12). count=2."
+              "**Step 1: Target**<br>• **State:** `k=3, threshold=4`. Target Sum = 12.<br>• **Window 1:** `[2, 2, 2]` Sum=6. Not valid.",
+              "**Step 2: Slide**<br>• **Window 2:** `[2, 2, 5]` Sum=9. Not valid.<br>• **Window 3:** `[2, 5, 5]` Sum=12. **Count = 1**.",
+              "**Step 3: Found More**<br>• **Window 4:** `[5, 5, 5]` Sum=15. **Count = 2**."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
@@ -1170,6 +1658,20 @@ export const patternsData = [
       { difficulty: "M", name: "Minimum Number of Flips to Make Binary Grid Palindrome", companies: ["Amazon"] },
       { difficulty: "M", name: "Longest Nice Subarray", companies: ["Amazon"] },
       { difficulty: "M", name: "Count Number of Nice Subarrays", companies: ["Amazon", "Google"] }
+    ],
+    conceptBoosters: [
+      {
+        q: "Sliding Window ka basic idea kya hai?",
+        a: "Socho ek 'window' hai jo array ke upar se nikal rahi hai. Jab window aage badhti hai, toh ek naya element 'add' hota hai aur ek purana element 'remove' hota hai. Humein poori window ka sum firse calculate nahi karna padta, bas `sum = sum + new - old` karna hota hai. Isse performance O(N) ho jati hai."
+      },
+      {
+        q: "Fixed vs Variable Window mein kya farak hai?",
+        a: "Fixed window mein window ka size (k) hamesha same rehta hai (e.g., Max sum of k elements). Variable window mein window 'expand' hoti hai condition meet karne ke liye aur 'shrink' hoti hai condition maintain karne ke liye (e.g., Smallest subarray with sum > X)."
+      },
+      {
+        q: "Variable Window (Expand/Shrink) ka dry run samjhao.",
+        a: "Humein sum >= 7 chahiye. Array: `[2, 3, 1, 2, 4, 3]`<br>1. **Expand:** Right pointer ko move kiya jab tak sum 7 ya usse bada na ho: `[2, 3, 1, 2]` (Sum=8).<br>2. **Shrink:** Left pointer ko move karke window choti karo jab tak condition valid rahe: `[3, 1, 2]` (Sum=6 - invalid).<br>3. **Loop:** Firse expand kiya: `[3, 1, 2, 4]` (Sum=10). Firse shrink kiya... aise hi minimum length mil jayegi."
+      }
     ]
   },
   {
@@ -1219,9 +1721,9 @@ export const patternsData = [
         nums[i] += nums[i-1]
     return nums`,
             dryRun: [
-              "[STATE] nums=[1,2,3,4] [DESC] i=1: nums[1] = 2 + 1 = 3. nums=[1,3,3,4].",
-              "[STATE] i=2: nums[2] = 3 + 3 = 6. nums=[1,3,6,4].",
-              "[STATE] i=3: nums[3] = 4 + 6 = 10. nums=[1,3,6,10]."
+              "**Step 1: Starting**<br>• **Array State:** `[1, 2, 3, 4]`<br>• **Logic:** Loop index `i=1` (value 2). Humein pichli value (1) isme add karni hai.<br>• **Result:** `2 + 1 = 3`. Array ab: `[1, 3, 3, 4]`.",
+              "**Step 2: Accumulating**<br>• **Array State:** `[1, 3, 3, 4]`<br>• **Logic:** Loop index `i=2` (value 3). Pichli value (3) add ki.<br>• **Result:** `3 + 3 = 6`. Array ab: `[1, 3, 6, 4]`.",
+              "**Step 3: Final Sum**<br>• **Array State:** `[1, 3, 6, 10]`<br>• **Logic:** Loop index `i=3` (value 4). Pichli value (6) add ki.<br>• **Result:** `4 + 6 = 10`."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
@@ -1252,8 +1754,9 @@ export const patternsData = [
         left_sum += x
     return -1`,
             dryRun: [
-              "[STATE] total=28, left=0 [DESC] i=0: 0 == (28-0-1) False. left=1.",
-              "[STATE] i=3 (x=6): left=11. 11 == (28-11-6) => 11 == 11. True. Return 3."
+              "**Step 1: Total Sum**<br>• **Array State:** `[1, 7, 3, 6, 5, 6]`<br>• **Values:** Total Sum = **28**, `left_sum = 0`<br>• **Logic:** Pehle poore array ka sum nikal liya.",
+              "**Step 2: Iterating**<br>• **Pointers:** `i=0` (x=1). Check: `0 == (28-0-1)`? False.<br>• **Pointers:** `i=1` (x=7). Check: `1 == (28-1-7)`? False.<br>• **Pointers:** `i=2` (x=3). Check: `8 == (28-8-3)`? False.",
+              "**Step 3: Pivot Found**<br>• **Pointers:** `i=3` (x=6). Check: `11 == (28-11-6)`? **True!**<br>• **Result:** Index 3 pivot hai."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
@@ -1282,9 +1785,9 @@ export const patternsData = [
         max_sum = max(max_sum, curr_sum)
     return max_sum`,
             dryRun: [
-              "[STATE] nums=[-2,1,-3,4...], max=-2, curr=-2 [DESC] i=1 (x=1): curr = max(1, -2+1) = 1. max=1.",
-              "[STATE] i=2 (x=-3): curr = max(-3, 1-3) = -2. max=1.",
-              "[STATE] i=3 (x=4): curr = max(4, -2+4) = 4. max=4."
+              "**Step 1: Initial**<br>• Array: `[-2, 1, -3, 4, -1, 2, 1, -5, 4]`<br>• `curr_sum = -2`, `max_sum = -2`.",
+              "**Step 2: Decisions**<br>• i=1 (x=1): `max(1, -2+1) = 1`. (Naya start kiya). `max_sum = 1`.<br>• i=2 (x=-3): `max(-3, 1-3) = -2`. (Purana continue). `max_sum = 1`.",
+              "**Step 3: Finding Max**<br>• i=3 (x=4): `max(4, -2+4) = 4`. (Naya start). `max_sum = 4`.<br>• i=4,5,6 follow karenge... end mein `max_sum = 6` milega."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
@@ -1319,9 +1822,9 @@ export const patternsData = [
         
     return count`,
             dryRun: [
-              "[STATE] nums=[1,1,1], k=2, map={0:1} [DESC] x=1: curr=1. 1-2=-1 not in map. map={0:1, 1:1}.",
-              "[STATE] x=1: curr=2. 2-2=0 in map (val=1). count=1. map={0:1, 1:1, 2:1}.",
-              "[STATE] x=1: curr=3. 3-2=1 in map (val=1). count=2. map={0:1, 1:1, 2:1, 3:1}."
+              "**Step 1: Setup**<br>• nums: `[1, 1, 1]`, k=2, Map: `{0: 1}` (Base case).<br>• i=0 (x=1): `curr_sum = 1`. `1 - 2 = -1` (Not in map). Map: `{0: 1, 1: 1}`.",
+              "**Step 2: Subarray Found**<br>• i=1 (x=1): `curr_sum = 2`. `2 - 2 = 0` (Found in map! frequency=1). `count = 1`. Map: `{0: 1, 1: 1, 2: 1}`.",
+              "**Step 3: Another Match**<br>• i=2 (x=1): `curr_sum = 3`. `3 - 2 = 1` (Found in map! frequency=1). `count = 2`. Map: `{0: 1, 1: 1, 2: 1, 3: 1}`.<br>• Result: 2."
             ],
             complexity: "Time: O(N), Space: O(N)"
           }
@@ -1390,9 +1893,10 @@ export const patternsData = [
         
     return res`,
             dryRun: [
-              "[STATE] nums=[2,3,-2,4] [DESC] x=2: max=2, min=2, res=2.",
-              "[STATE] x=3: max=6, min=3, res=6.",
-              "[STATE] x=-2: tmp=6*-2=-12. max=max(-12, -4, -2)=-2. min=min(-12, -4, -2)=-12. res=6."
+              "**Step 1: Tracking Min/Max**<br>• nums: `[2, 3, -2, 4]`. `curr_max = curr_min = res = 2` (first element).",
+              "**Step 2: Accumulating**<br>• i=1 (x=3): `curr_max = max(3, 6, 3) = 6`, `curr_min = min(3, 6, 3) = 3`. `res = 6`.",
+              "**Step 3: Negative Impact**<br>• i=2 (x=-2): `tmp = 6 * -2 = -12`. `curr_max = max(-2, 3 * -2, -12) = -2`. `curr_min = min(-2, -6, -12) = -12`. `res = 6`. (Note how max became small due to negative).",
+              "**Final:** `res = 6`."
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
@@ -1608,6 +2112,48 @@ export const patternsData = [
       { trigger: "Exact word lookup", pattern: "HashMap (not Trie)" }
     ],
     questions: [
+      { 
+        isMastery: true, 
+        difficulty: "E", 
+        name: "Contains Duplicate", 
+        companies: ["Amazon", "Google", "Microsoft"], 
+        link: "https://leetcode.com/problems/contains-duplicate/",
+        problemStatement: "Given an integer array `nums`, return `true` if any value appears at least twice in the array, and return `false` if every element is distinct.",
+        testCases: [{ input: "nums = [1,2,3,1]", output: "true" }],
+        solutions: [{
+          type: "Optimal (HashSet)",
+          concept: "Hum ek **HashSet** maintain karenge. Har number ko check karenge ki woh set mein pehle se hai ya nahi. Agar hai, toh duplicate mil gaya (True). Agar nahi, toh set mein add kar denge.",
+          code: "def containsDuplicate(nums):\n    seen = set()\n    for x in nums:\n        if x in seen:\n            return True\n        seen.add(x)\n    return False",
+          dryRun: [
+            "1. nums = [1, 2, 3, 1], seen = set().",
+            "2. x = 1: Seen mein nahi hai. Set: {1}.",
+            "3. x = 2: Seen mein nahi hai. Set: {1, 2}.",
+            "4. x = 3: Seen mein nahi hai. Set: {1, 2, 3}.",
+            "5. x = 1: Set mein pehle se hai! Return True."
+          ],
+          complexity: "Time: O(N), Space: O(N)"
+        }]
+      },
+      { 
+        isMastery: true, 
+        difficulty: "E", 
+        name: "Two Sum", 
+        companies: ["Amazon", "Google", "Meta"], 
+        link: "https://leetcode.com/problems/two-sum/",
+        problemStatement: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.",
+        testCases: [{ input: "nums = [2,7,11,15], target = 9", output: "[0,1]" }],
+        solutions: [{
+          type: "Optimal (HashMap)",
+          concept: "Hum numbers ko traverse karenge aur check karenge ki kya `target - current_number` HashMap mein hai. Agar hai, toh humein pair mil gaya. Agar nahi, toh current number aur uska index HashMap mein daal denge.",
+          code: "def twoSum(nums, target):\n    prevMap = {} # val : index\n    for i, n in enumerate(nums):\n        diff = target - n\n        if diff in prevMap:\n            return [prevMap[diff], i]\n        prevMap[n] = i",
+          dryRun: [
+            "**Step 1: Setup**<br>• Input: `nums = [2, 7, 11, 15]`, Target: `9`<br>• HashMap: `{}` (Khali)<br>• **Iteration 1 (i=0):** n=2. Humein 9 banane ke liye 7 chahiye (`9 - 2 = 7`). Check kiya Map mein: 7 nahi hai. Map update: `{2: 0}`.",
+            "**Step 2: Found Match**<br>• **Iteration 2 (i=1):** n=7. Humein 9 banane ke liye 2 chahiye (`9 - 7 = 2`). Check kiya Map mein: **2 mil gaya index 0 par!**<br>• **Result:** Return indices `[0, 1]`.",
+            "**Why this works?** Humne sirf ek baar array ghooma aur Map ki madad se piche wali values ko 'yaad' rakha."
+          ],
+          complexity: "Time: O(N), Space: O(N)"
+        }]
+      },
       { isMastery: true, difficulty: "E", name: "Contains Duplicate II", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/contains-duplicate-ii/" },
       { isMastery: true, difficulty: "E", name: "Unique Number of Occurrences", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/unique-number-of-occurrences/" },
       { isMastery: true, difficulty: "E", name: "Find the Difference of Two Arrays", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/find-the-difference-of-two-arrays/" },
@@ -1618,7 +2164,6 @@ export const patternsData = [
       { isMastery: true, difficulty: "E", name: "Ransom Note", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/ransom-note/" },
       { isMastery: true, difficulty: "E", name: "Intersection of Two Arrays II", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/intersection-of-two-arrays-ii/" },
       { isMastery: true, difficulty: "E", name: "Keyboard Row", companies: ["Amazon"], link: "https://leetcode.com/problems/keyboard-row/" },
-      { difficulty: "E", name: "Two Sum", companies: ["Amazon", "Google", "Meta", "Microsoft", "Adobe"] },
       { difficulty: "M", name: "Group Anagrams", companies: ["Amazon", "Google", "Meta", "Microsoft"] },
       { difficulty: "M", name: "Top K Frequent Elements", companies: ["Amazon", "Google", "Meta", "LinkedIn"] },
       { difficulty: "M", name: "Longest Consecutive Sequence", companies: ["Google", "Amazon", "Meta"] },
@@ -1631,7 +2176,6 @@ export const patternsData = [
       { difficulty: "E", name: "Happy Number", companies: ["Amazon", "Google", "Adobe"] },
       { difficulty: "E", name: "Word Pattern", companies: ["Uber", "Amazon"] },
       { difficulty: "E", name: "Single Number", companies: ["Amazon", "Microsoft", "Adobe"] },
-      { difficulty: "E", name: "Contains Duplicate", companies: ["Amazon", "Google", "Microsoft", "Adobe"] },
       { difficulty: "M", name: "Find All Duplicates in Array", companies: ["Amazon", "Adobe"] },
       { difficulty: "M", name: "Longest Substring Without Repeating Chars", companies: ["Amazon", "Google"] },
       { difficulty: "M", name: "Equal Row and Column Pairs", companies: ["Amazon", "Google"] },
@@ -1649,6 +2193,24 @@ export const patternsData = [
       { difficulty: "M", name: "Minimum Area Rectangle", companies: ["Google", "Amazon"] },
       { difficulty: "M", name: "Max Points on a Line", companies: ["Amazon", "Google", "Microsoft"] },
       { difficulty: "H", name: "Longest Duplicate Substring", companies: ["Google", "Amazon"] }
+    ],
+    conceptBoosters: [
+      {
+        q: "HashMap O(1) kaise hota hai? Iska piche ka logic kya hai?",
+        a: "HashMap ek **Hash Function** use karta hai jo aapki 'Key' ko ek unique index (bucket) mein convert kar deta hai. Isliye jab aap key search karte ho, toh direct us index par pahuch jaate ho. Average case mein ye O(1) hota hai. Worst case O(N) tab hota hai jab saari keys ek hi index par 'collide' ho jayein (lekin modern languages ise handle kar leti hain)."
+      },
+      {
+        q: "HashSet aur HashMap mein kya difference hai?",
+        a: "HashSet sirf unique **Values** (keys) store karta hai. HashMap **Key-Value** pairs store karta hai. Internally, Python ka `set()` ek aisi dictionary hai jisme values nahi hoti, sirf keys hoti hain."
+      },
+      {
+        q: "Frequency Map kab use karein?",
+        a: "Jab aapko 'gin-na' (count) ho ki koi element kitni baar aaya hai (jaise Anagrams mein). Dry run: `s = 'apple'` -> Map: `{'a':1, 'p':2, 'l':1, 'e':1}`."
+      },
+      {
+        q: "Two Sum: HashMap vs Two Pointer?",
+        a: "Agar array **Sorted** hai, toh Two Pointer use karo (O(1) space). Agar array **Unsorted** hai, toh HashMap use karo (O(N) space) kyunki sorting O(N log N) time legi."
+      }
     ]
   },
   {
@@ -1681,10 +2243,73 @@ export const patternsData = [
       { trigger: "Peak / rotated sorted", pattern: "Binary Search (modified)" }
     ],
     questions: [
-      { isMastery: true, difficulty: "E", name: "Sqrt(x)", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/sqrtx/" },
+      { 
+        isMastery: true, 
+        id: "m_sqrt",
+        difficulty: "E", 
+        name: "Sqrt(x)", 
+        companies: ["Amazon", "Microsoft"], 
+        link: "https://leetcode.com/problems/sqrtx/",
+        problemStatement: "Given a non-negative integer `x`, return the square root of `x` rounded down to the nearest integer. The returned integer should be non-negative as well.",
+        testCases: [{ input: "x = 8", output: "2", explanation: "The square root of 8 is 2.82842..., and since we round it down to the nearest integer, 2 is returned." }],
+        solutions: [{
+          type: "Optimal (Binary Search)",
+          concept: "Square root hamesha `1` aur `x` ke beech hota hai. Hum Binary Search se ek number `mid` dhundenge jiska `mid * mid <= x` ho.",
+          code: `def mySqrt(x):
+    if x < 2: return x
+    l, r = 1, x // 2
+    res = 0
+    while l <= r:
+        mid = (l + r) // 2
+        if mid * mid == x:
+            return mid
+        if mid * mid < x:
+            res = mid
+            l = mid + 1
+        else:
+            r = mid - 1
+    return res`,
+          dryRun: [
+            "**Step 1: Initial Range**<br>• x = 8. Range: `l=1`, `r=4` (x//2).<br>• `mid = (1+4)//2 = 2`.<br>• `2 * 2 = 4`. `4 < 8`, toh `res = 2` aur hum badi values check karenge (`l = 3`).",
+            "**Step 2: Narrowing**<br>• Range: `l=3`, `r=4`.<br>• `mid = (3+4)//2 = 3`.<br>• `3 * 3 = 9`. `9 > 8`, toh range choti karenge (`r = 2`).",
+            "**Step 3: Finish**<br>• `l=3`, `r=2`. Loop break ho gaya (`l > r`).<br>• **Final Result:** `res = 2`."
+          ],
+          complexity: "Time: O(log X), Space: O(1)"
+        }]
+      },
       { isMastery: true, difficulty: "E", name: "Guess Number Higher or Lower", companies: ["Google", "Microsoft"], link: "https://leetcode.com/problems/guess-number-higher-or-lower/" },
       { isMastery: true, difficulty: "E", name: "First Bad Version", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/first-bad-version/" },
-      { isMastery: true, difficulty: "E", name: "Search Insert Position", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/search-insert-position/" },
+      { 
+        isMastery: true, 
+        id: "m_search_insert",
+        difficulty: "E", 
+        name: "Search Insert Position", 
+        companies: ["Amazon", "Google"], 
+        link: "https://leetcode.com/problems/search-insert-position/",
+        problemStatement: "Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.",
+        testCases: [{ input: "nums = [1,3,5,6], target = 5", output: "2" }],
+        solutions: [{
+          type: "Optimal (Binary Search)",
+          concept: "Ye simple Binary Search hai, bas twist ye hai ki agar element nahi milta, toh `left` pointer humesha sahi insertion position par rukta hai.",
+          code: `def searchInsert(nums, target):
+    l, r = 0, len(nums) - 1
+    while l <= r:
+        mid = (l + r) // 2
+        if nums[mid] == target:
+            return mid
+        if nums[mid] < target:
+            l = mid + 1
+        else:
+            r = mid - 1
+    return l`,
+          dryRun: [
+            "**Step 1: Start**<br>• nums: `[1, 3, 5, 6]`, target: `5`<br>• `l=0, r=3`. `mid = 1` (val 3).<br>• `3 < 5`, toh `l = 2`.",
+            "**Step 2: Match**<br>• `l=2, r=3`. `mid = 2` (val 5).<br>• `5 == 5`. Return index `2`.",
+            "**Scenario 2 (Insertion):** target=2.<br>• i=0: mid=1 (3). 3>2, r=0.<br>• i=1: mid=0 (1). 1<2, l=1.<br>• l>r, return l=1. Perfect!"
+          ],
+          complexity: "Time: O(log N), Space: O(1)"
+        }]
+      },
       { isMastery: true, difficulty: "E", name: "Peak Index in a Mountain Array", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/peak-index-in-a-mountain-array/" },
       { isMastery: true, difficulty: "E", name: "Valid Perfect Square", companies: ["Amazon", "LinkedIn"], link: "https://leetcode.com/problems/valid-perfect-square/" },
       { isMastery: true, difficulty: "E", name: "Find Smallest Letter Greater Than Target", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/find-smallest-letter-greater-than-target/" },
@@ -1771,7 +2396,38 @@ export const patternsData = [
       { isMastery: true, difficulty: "E", name: "Remove All Adjacent Duplicates In String", companies: ["Amazon", "Bloomberg"], link: "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/" },
       { isMastery: true, difficulty: "E", name: "Min Stack", companies: ["Amazon", "Google", "Microsoft", "Bloomberg"] },
       { isMastery: true, difficulty: "E", name: "Backspace String Compare", companies: ["Google", "Amazon"] },
-      { difficulty: "E", name: "Valid Parentheses", companies: ["Amazon", "Google", "Meta", "Microsoft", "Bloomberg"] },
+      { 
+        isMastery: true, 
+        id: "m_valid_parentheses",
+        difficulty: "E", 
+        name: "Valid Parentheses", 
+        companies: ["Amazon", "Google", "Meta"], 
+        link: "https://leetcode.com/problems/valid-parentheses/",
+        problemStatement: "Given a string `s` containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+        testCases: [{ input: "s = '()[]{}'", output: "true" }],
+        solutions: [{
+          type: "Optimal (Stack)",
+          concept: "Jab bhi opening bracket aaye, use stack mein push karo. Jab closing aaye, check karo ki stack ke top par uska matching pair hai ya nahi.",
+          code: `def isValid(s):
+    stack = []
+    mapping = {')': '(', '}': '{', ']': '['}
+    for char in s:
+        if char in mapping:
+            top = stack.pop() if stack else '#'
+            if mapping[char] != top:
+                return False
+        else:
+            stack.append(char)
+    return not stack`,
+          dryRun: [
+            "**Step 1: Opening**<br>• s = `()[]{}`, stack = `[]`.<br>• char = `(`: Opening hai, stack mein push kiya. Stack: `['(']`.",
+            "**Step 2: Closing Match**<br>• char = `)`: Closing hai. Stack se pop kiya: `(`. Match ho gaya! Stack: `[]`.",
+            "**Step 3: Continue**<br>• char = `[`: Push. Stack: `['[']`.<br>• char = `]`: Pop match. Stack: `[]`.",
+            "**Final:** Stack khali hai, iska matlab saare pair valid hain. Return True."
+          ],
+          complexity: "Time: O(N), Space: O(N)"
+        }]
+      },
       { difficulty: "M", name: "Daily Temperatures", companies: ["Amazon", "Google", "Microsoft", "Uber"] },
       { difficulty: "E", name: "Next Greater Element I", companies: ["Amazon", "Microsoft"] },
       { difficulty: "H", name: "Largest Rectangle in Histogram", companies: ["Google", "Amazon", "Microsoft", "Meta"] },
@@ -1841,7 +2497,33 @@ export const patternsData = [
       { trigger: "LRU Cache design", pattern: "LL + HashMap" }
     ],
     questions: [
-      { isMastery: true, difficulty: "E", name: "Middle of the Linked List", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/middle-of-the-linked-list/" },
+      { 
+        isMastery: true, 
+        id: "m_middle_ll",
+        difficulty: "E", 
+        name: "Middle of the Linked List", 
+        companies: ["Amazon", "Microsoft"], 
+        link: "https://leetcode.com/problems/middle-of-the-linked-list/",
+        problemStatement: "Given the `head` of a singly linked list, return the middle node of the linked list. If there are two middle nodes, return the second middle node.",
+        testCases: [{ input: "head = [1,2,3,4,5]", output: "[3,4,5]" }],
+        solutions: [{
+          type: "Optimal (Fast & Slow Pointer)",
+          concept: "Hum do pointers use karenge: `slow` jo 1 step chalega aur `fast` jo 2 steps chalega. Jab `fast` end par pahuchega, `slow` exact middle mein hoga.",
+          code: `def middleNode(head):
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+    return slow`,
+          dryRun: [
+            "**Step 1: Start**<br>• List: `1 -> 2 -> 3 -> 4 -> 5`<br>• `slow` at 1, `fast` at 1.",
+            "**Step 2: First Jump**<br>• `slow` moves to 2.<br>• `fast` moves to 3 (two steps).",
+            "**Step 3: Second Jump**<br>• `slow` moves to 3.<br>• `fast` moves to 5.",
+            "**Step 4: End**<br>• `fast.next` is null. Loop ends.<br>• **Result:** `slow` is at 3. Return node 3."
+          ],
+          complexity: "Time: O(N), Space: O(1)"
+        }]
+      },
       { isMastery: true, difficulty: "E", name: "Delete Node in a Linked List", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/delete-node-in-a-linked-list/" },
       { isMastery: true, difficulty: "E", name: "Remove Linked List Elements", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/remove-linked-list-elements/" },
       { isMastery: true, difficulty: "E", name: "Remove Duplicates from Sorted List", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/remove-duplicates-from-sorted-list/" },
@@ -1920,7 +2602,33 @@ export const patternsData = [
       { trigger: "Ancestor / LCA", pattern: "DFS + parent tracking" }
     ],
     questions: [
-      { isMastery: true, difficulty: "E", name: "Same Tree", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/same-tree/" },
+      { 
+        isMastery: true, 
+        id: "m_same_tree",
+        difficulty: "E", 
+        name: "Same Tree", 
+        companies: ["Amazon", "Google"], 
+        link: "https://leetcode.com/problems/same-tree/",
+        problemStatement: "Given the roots of two binary trees `p` and `q`, write a function to check if they are the same or not.",
+        testCases: [{ input: "p = [1,2,3], q = [1,2,3]", output: "true" }],
+        solutions: [{
+          type: "Optimal (DFS Recursion)",
+          concept: "Hum dono trees ko ek saath traverse karenge. Agar dono nodes `null` hain, toh sahi hai. Agar ek `null` aur ek nahi, ya phir values alag hain, toh false. Phir left aur right subtrees ke liye check karenge.",
+          code: `def isSameTree(p, q):
+    if not p and not q:
+        return True
+    if not p or not q or p.val != q.val:
+        return False
+    return isSameTree(p.left, q.left) and isSameTree(p.right, q.right)`,
+          dryRun: [
+            "**Step 1: Root Check**<br>• Tree P: `1(root) -> 2(L), 3(R)`<br>• Tree Q: `1(root) -> 2(L), 3(R)`<br>• P.val (1) == Q.val (1). Root match! Ab left bacho ko check karo.",
+            "**Step 2: Left Subtree**<br>• Node P: 2, Node Q: 2. Values match! Ab inke bacho ko check karo (Null, Null). True.",
+            "**Step 3: Right Subtree**<br>• Node P: 3, Node Q: 3. Values match! Inke bacho ko check karo (Null, Null). True.",
+            "**Final:** Saare checks True hain, toh output True."
+          ],
+          complexity: "Time: O(N), Space: O(H) where H is height"
+        }]
+      },
       { isMastery: true, difficulty: "E", name: "Minimum Depth of Binary Tree", companies: ["Amazon", "Google"], link: "https://leetcode.com/problems/minimum-depth-of-binary-tree/" },
       { isMastery: true, difficulty: "E", name: "Path Sum", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/path-sum/" },
       { isMastery: true, difficulty: "E", name: "Binary Tree Inorder Traversal", companies: ["Amazon", "Microsoft"], link: "https://leetcode.com/problems/binary-tree-inorder-traversal/" },
