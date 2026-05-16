@@ -705,11 +705,133 @@ def isSubsequenceBF(s, t):
             complexity: "Time: O(N^3), Space: O(1)"
           }
         ],
+        importantNotes: "• **Recursive Logic:** K-Sum problem ko solve karne ke liye hamesha (K-2) loops + 1 Two Pointer use hota hai."
+      },
+      {
+        id: "q_container_water",
+        difficulty: "M", 
+        name: "Container With Most Water", 
+        companies: ["Amazon", "Google", "Meta"],
+        link: "https://leetcode.com/problems/container-with-most-water/",
+        problemStatement: "Given an array `height`, find two lines that form a container with the most water.",
+        testCases: [
+          { input: "height = [1,8,6,2,5,4,8,3,7]", output: "49" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Har possible pair (i, j) check karo aur area calculate karo. O(N²) time.",
+            code: `def maxArea(height):
+    max_a = 0
+    for i in range(len(height)):
+        for j in range(i + 1, len(height)):
+            max_a = max(max_a, (j - i) * min(height[i], height[j]))
+    return max_a`,
+            complexity: "Time: O(N²), Space: O(1)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono ends se start karo. Bottleneck hamesha choti wall hoti hai, isliye choti wall ko move karo.",
+            code: `def maxArea(height):
+    l, r = 0, len(height) - 1
+    max_a = 0
+    while l < r:
+        max_a = max(max_a, (r - l) * min(height[l], height[r]))
+        if height[l] < height[r]: l += 1
+        else: r -= 1
+    return max_a`,
+            dryRun: [
+              "**Step 1: Start**<br>• **State:** L=0 (1), R=8 (7), width=8<br>• **Action:** Area = 8 * min(1,7) = 8. L chota hai, move L.<br>• **Result:** L=1, R=8",
+              "**Step 2: Match**<br>• **State:** L=1 (8), R=8 (7), width=7<br>• **Action:** Area = 7 * min(8,7) = 49. NEW MAX!<br>• **Result:** max_area = 49"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Hinglish Tip:** Badi wall ko move karne se width kam hogi aur area kabhi nahi badhega. Isliye hamesha choti wall move karo."
+      },
+      {
+        id: "q_valid_pal",
+        difficulty: "E",
+        name: "Valid Palindrome",
+        companies: ["Meta", "Microsoft"],
+        link: "https://leetcode.com/problems/valid-palindrome/",
+        problemStatement: "Check if a string is a palindrome after cleaning non-alphanumeric characters.",
+        testCases: [
+          { input: 's = "A man, a plan..."', output: "true" }
+        ],
+        solutions: [
+          {
+            type: "Brute Force",
+            concept: "Pehle string ko 'clean' karo aur lowercase karo, fir reverse karke check karo.",
+            code: `def isPalindrome(s):
+    cleaned = "".join(c.lower() for c in s if c.isalnum())
+    return cleaned == cleaned[::-1]`,
+            complexity: "Time: O(N), Space: O(N)"
+          },
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Dono ends se pointers move karo aur non-alphanumeric skip karte jao.",
+            code: `def isPalindrome(s):
+    l, r = 0, len(s) - 1
+    while l < r:
+        while l < r and not s[l].isalnum(): l += 1
+        while l < r and not s[r].isalnum(): r -= 1
+        if s[l].lower() != s[r].lower(): return False
+        l += 1; r -= 1
+    return True`,
+            dryRun: [
+              "**Step 1: Compare**<br>• **State:** s='A man...', L=0 ('A'), R=30 ('a')<br>• **Action:** Match! L=1, R=29.<br>• **Result:** L=1 (' '), R=29 (' ')"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Logic Zone:** In-place modification se space O(1) ho jata hai."
+      },
+      {
+        id: "q_valid_pal_ii",
+        difficulty: "E",
+        name: "Valid Palindrome II",
+        companies: ["Meta"],
+        link: "https://leetcode.com/problems/valid-palindrome-ii/",
+        problemStatement: "At most one character delete karke palindrome ban sakta hai?",
+        testCases: [{ input: 's = "abca"', output: "true" }],
+        solutions: [
+          {
+            type: "Optimal (Two Pointer)",
+            concept: "Pehla mismatch milte hi dono options (skip L or skip R) check karo.",
+            code: `def validPalindrome(s):
+    def is_pal(i, j):
+        while i < j:
+            if s[i] != s[j]: return False
+            i += 1; j -= 1
+        return True
+    l, r = 0, len(s) - 1
+    while l < r:
+        if s[l] != s[r]:
+            return is_pal(l+1, r) or is_pal(l, r-1)
+        l += 1; r -= 1
+    return True`,
+            dryRun: [
+              "**Step 1: Mismatch**<br>• **State:** s='abca', L=1 ('b'), R=2 ('c')<br>• **Action:** 'b' != 'c'. Check 'c' is pal (True) OR 'b' is pal (True).<br>• **Result:** Return True"
+            ],
+            complexity: "Time: O(N), Space: O(1)"
+          }
+        ],
+        importantNotes: "• **Note:** Branching sirf ek baar hoti hai, isliye linear time hai."
+      },
+      {
+        id: "q_trap_rain",
+        difficulty: "H",
+        name: "Trapping Rain Water",
+        companies: ["Google", "Amazon"],
+        link: "https://leetcode.com/problems/trapping-rain-water/",
+        problemStatement: "Elevation map mein kitna paani trap hoga?",
+        testCases: [{ input: "height = [0,1,0,2...]", output: "6" }],
+        solutions: [
           {
             type: "Optimal (Two Pointer)",
             concept: "Dono ends se pointers chalao. Jo wall choti hai, wahan se water trap hone ka chance hota hai.",
             code: `def trap(height):
-    if not height: return 0
     l, r = 0, len(height) - 1
     l_max = r_max = res = 0
     while l < r:
@@ -723,13 +845,12 @@ def isSubsequenceBF(s, t):
             r -= 1
     return res`,
             dryRun: [
-              "**Step 1: Start**<br>• **State:** height=[0,1,0,2...], L=0 (0), R=11 (1)<br>• **Action:** 0 < 1. move L pointer. l_max update to 0.<br>• **Result:** res=0, L=1",
-              "**Step 2: Trap Water**<br>• **State:** L=2 (0), l_max=1<br>• **Action:** height[2] (0) < l_max (1). Water trap! 1 - 0 = 1.<br>• **Result:** res = 1, L=3"
+              "**Step 1: Trap**<br>• **State:** L=2 (0), l_max=1<br>• **Action:** 0 < 1. Trap 1 unit water.<br>• **Result:** res=1"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "• **Hinglish Tip:** Bottleneck hamesha choti wall hoti hai. Isliye pointers ko small wall se move karte hain."
+        importantNotes: "• **Hinglish Tip:** Bottleneck hamesha choti wall hoti hai."
       },
       {
         id: "q_rem_dups",
