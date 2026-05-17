@@ -27,74 +27,68 @@ export const patternsData = [
         isMastery: true, 
         id: "m_rev_str",
         difficulty: "E", 
-        name: "Reverse String", 
+        name: "Q1. Reverse String", 
         companies: ["Amazon", "Google", "Apple", "Adobe"], 
         link: "https://leetcode.com/problems/reverse-string/",
-        problemStatement: "Write a function that reverses a string. The input string is given as an array of characters `s`.\nYou must do this by modifying the input array in-place with O(1) extra memory.",
+        problemStatement: "Write a function that reverses a character array in-place. No new array allowed — same array mein modify karo with only O(1) extra memory.",
         testCases: [
-          { input: 's = ["h","e","l","l","o"]', output: '["o","l","l","e","h"]' }
+          { input: 's = ["H", "a", "n", "n", "a", "h"]', output: '["h","a","n","n","a","H"]' }
         ],
         solutions: [
           {
             type: "Brute Force",
-            concept: "String ko reverse karne ka sabse sidha tarika hai ki hum ek extra array/list banayein aur usme reverse order mein copy karein.\n• Python mein slicing `s[::-1]` use karke hum ek reversed list bana sakte hain.\n• Lekin yeh O(N) extra space lega jo ki space constraint (O(1)) ko violate karta hai. Par hum isko baseline samajhne ke liye likh sakte hain.",
+            concept: "String ko reverse karne ka sabse sidha tarika hai ki hum ek extra array/list banayein aur usme reverse order mein copy karein (s[::-1]). Lekin yeh O(N) extra space lega jo ki space constraint (O(1)) ko violate karta hai.",
             code: `def reverseStringBrute(s):
-    # Python slicing se ek nayi reversed list banegi (O(N) space)
     reversed_list = s[::-1]
-    
-    # Original array 's' ko elements copy karke update karenge
     for i in range(len(s)):
         s[i] = reversed_list[i]`,
             complexity: "Time: O(N), Space: O(N)"
           },
           {
             type: "Optimal (Two Pointer)",
-            concept: "Hum **Two Pointers** technique use karenge — ek pointer starting index `left=0` par aur dusra pointer ending index `right=len(s)-1` par hoga.\n• Jab tak `left < right` hai, hum dono positions ke elements ko in-place swap karenge.\n• Swap karne ke baad, `left` pointer ko aage badhaenge (`left += 1`) aur `right` pointer ko peeche laenge (`right -= 1`).\n• Isse bina kisi extra array ke original string modify ho jayegi aur space complexity **O(1)** rahegi.",
+            concept: "We use the Two Pointers technique. One pointer starts from the left, one from the right. We keep swapping characters and move both pointers inward until they meet in the middle.",
             code: `class Solution:
-    def reverseString(self, s: List[str]) -> None:
+    def reverseString(self, s: list[str]) -> None:
         # Pointers ko boundaries par initialize karo
         left, right = 0, len(s) - 1
-        
+
         # Jab tak pointers cross nahi hote, tab tak loop chalao
         while left < right:
-            # Elegant Pythonic in-place swap
+            # Swap s[left] and s[right]
             s[left], s[right] = s[right], s[left]
-            
-            # Left pointer ko aage badao
+            # Move left pointer forward
             left += 1
-            # Right pointer ko peeche lao
+            # Move right pointer backward
             right -= 1`,
             dryRun: [
-              "**Step 1: Pointers Placement**<br>• **State:** `left=0` ('h'), `right=4` ('o')<br>• **Array:** ['h','e','l','l','o']<br>• **Action:** Dono pointers ke characters ko swap karo aur pointers ko move karo: `left`++ (1), `right`-- (3).<br>• **New Array:** ['o','e','l','l','h']",
-              "**Step 2: Swapping Middle Elements**<br>• **State:** `left=1` ('e'), `right=3` ('l')<br>• **Array:** ['o','e','l','l','h']<br>• **Action:** Swap `s[1]` aur `s[3]`. Pointers ko aage move karo: `left`++ (2), `right`-- (2).<br>• **New Array:** ['o','l','l','e','h']",
-              "**Step 3: Meet in Middle (End)**<br>• **State:** `left=2` ('l'), `right=2` ('l')<br>• **Action:** `left < right` condition false ho gayi (dono same element par hain). Loop khatam!<br>• **Array:** ['o','l','l','e','h']"
+              "**Step 1: Start**<br>• **State:** left=0 ('H'), right=5 ('h')<br>• **Action:** Initial pointers set. Swap s[0] and s[5].<br>• **Result:** Array is ['h','a','n','n','a','H'], left moves to 1, right moves to 4.",
+              "**Step 2: Swap 2**<br>• **State:** left=1 ('a'), right=4 ('a')<br>• **Action:** Swap s[1] and s[4] (both are 'a').<br>• **Result:** Array remains ['h','a','n','n','a','H'], left moves to 2, right moves to 3.",
+              "**Step 3: Stop**<br>• **State:** left=2 ('n'), right=3 ('n')<br>• **Action:** left >= right (pointers met/crossed). STOP.<br>• **Result:** Final array: ['h','a','n','n','a','H']"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "• **Key Takeaway:** Swapping tab tak hi chalni chahiye jab tak pointers meet nahi karte (`left < right`). Agar loop `left <= right` tak chalaya toh center element khud se hi swap ho jayega, jo ki redundant hai.\n• **Memory Constraint:** Kuch programming languages mein strings *immutable* (non-changeable) hote hain, par LeetCode par array of characters `s` diya hai toh easily in-place swapping ho sakti hai.\n• **Interview Pro-Tip:** Hamesha interviewers ko batao ki `s.reverse()` internal function use karne ke bajaye custom swap logic likhna correct basic understanding ko prove karta hai!"
+        importantNotes: "• **Single character [\"a\"]:** left aur right dono same index pe hain, loop chalega hi nahi — seedha correct answer! ✅\n• **Even length array:** Pointers kabhi cross nahi karte, exactly beech mein ruk jaate hain ✅\n• **Odd length array:** Beech wala character apni jagah pe hi rehta hai, usse touch karne ki zaroorat hi nahi ✅\n• **Already reversed array:** Algorithm ko koi farak nahi padta — woh toh bas swap karta rehega, result sahi hi aayega ✅\n• **Two characters [\"a\",\"b\"]:** Sirf ek swap hoga aur kaam khatam — seedha aur simple! ✅"
       },
       { 
         isMastery: true, 
         id: "m_rev_vowels",
         difficulty: "E", 
-        name: "Reverse Vowels of a String", 
+        name: "Q2. Reverse Vowels of a String", 
         companies: ["Google", "Amazon"], 
         link: "https://leetcode.com/problems/reverse-vowels-of-a-string/",
-        problemStatement: "Given a string `s`, reverse only all the vowels in the string and return it.\nThe vowels are 'a', 'e', 'i', 'o', and 'u', and they can appear in both cases.",
+        problemStatement: "Given a string s, reverse only the vowels (a, e, i, o, u — both upper and lower case). All consonants stay exactly where they are.",
         testCases: [
-          { input: 's = "hello"', output: '"holle"' },
-          { input: 's = "leetcode"', output: '"leotcede"' }
+          { input: 's = "IceCreAm"', output: '"AceCreIm"' }
         ],
         solutions: [
           {
             type: "Brute Force",
             concept: "String se saare vowels nikal kar ek list mein rakho, use reverse karo, aur fir wapas string mein bhar do.",
-            code: `def reverseVowels(s):
+            code: `def reverseVowelsBrute(s):
     vowels = "aeiouAEIOU"
     extracted = [c for c in s if c in vowels]
     extracted.reverse()
-    
     res = list(s)
     idx = 0
     for i in range(len(res)):
@@ -106,81 +100,91 @@ export const patternsData = [
           },
           {
             type: "Optimal (Two Pointer)",
-            concept: "Dono ends se pointers chalao. Jab dono pointers kisi vowel par rukein, tab unhe swap kardo.",
-            code: `def reverseVowels(s):
-    s = list(s)
-    vowels = set("aeiouAEIOU")
-    l, r = 0, len(s) - 1
-    while l < r:
-        if s[l] not in vowels: l += 1
-        elif s[r] not in vowels: r -= 1
-        else:
-            s[l], s[r] = s[r], s[l]
-            l += 1; r -= 1
-    return "".join(s)`,
+            concept: "Two Pointers — same as Reverse String, but with a twist. Before swapping, we skip non-vowels on both sides. Only swap when both pointers are pointing at vowels.",
+            code: `class Solution:
+    def reverseVowels(self, s: str) -> str:
+        vowels = set("aeiouAEIOU") # O(1) lookup set
+        s = list(s) # Python strings are immutable, convert to list
+        left, right = 0, len(s) - 1
+
+        while left < right:
+            # Move left forward until it hits a vowel
+            while left < right and s[left] not in vowels:
+                left += 1
+            # Move right backward until it hits a vowel
+            while left < right and s[right] not in vowels:
+                right -= 1
+            # Swap and move both pointers inward
+            if left < right:
+                s[left], s[right] = s[right], s[left]
+                left += 1
+                right -= 1
+
+        return "".join(s)`,
             dryRun: [
-              "**Step 1: Searching**<br>• **State:** s='hello', L=0 ('h'), R=4 ('o')<br>• **Action:** 'h' is NOT a vowel, move L. 'o' IS a vowel, keep R.<br>• **Result:** L=1 ('e'), R=4 ('o')",
-              "**Step 2: Both Vowels**<br>• **State:** L=1 ('e'), R=4 ('o')<br>• **Action:** Both are vowels! Swap them. Move L to 2, R to 3.<br>• **Result:** s='holle', L=2 ('l'), R=3 ('l')",
-              "**Step 3: End**<br>• **State:** L=2, R=3. Both 'l' are NOT vowels. L moves to 3, R moves to 2.<br>• **Action:** L (3) > R (2). Stop loop.<br>• **Result:** Final: 'holle'"
+              "**Step 1: Swap 1**<br>• **State:** s='IceCreAm', left=0 ('I'), right=7 ('m')<br>• **Action:** right skips 'm' (not a vowel) and stops at index 6 ('A'). Swap 'I' and 'A'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left=1, right=5",
+              "**Step 2: Swap 2**<br>• **State:** left=1 ('c'), right=5 ('e')<br>• **Action:** left skips 'c' (not a vowel) and stops at index 2 ('e'). Swap 'e' and 'e'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left=3, right=4",
+              "**Step 3: Meet & Stop**<br>• **State:** left=3 ('C'), right=4 ('r')<br>• **Action:** left skips 'C' and 'r' to stop at index 5. But now left (5) >= right (4). STOP.<br>• **Result:** Final string: 'AceCreIm'"
             ],
             complexity: "Time: O(N), Space: O(N)"
           }
         ],
-        importantNotes: "• **Logic Hint:** Hamesha set ka use karein vowels store karne ke liye for **O(1)** lookup. Python mein string immutable hai, isliye pehle list mein convert karna padta hai."
+        importantNotes: "• **Koi vowel hi nahi \"bcdf\":** Dono pointers kabhi swap nahi karenge, string as-is return hogi ✅\n• **Saare vowels hain \"aeiou\":** Normal reverse hoga, exactly jaise pehli problem ✅\n• **Single character \"a\":** left == right from start, loop chalega hi nahi ✅\n• **Uppercase vowels \"IceCreAm\":** set(\"aeiouAEIOU\") mein dono cases hain, handle ho jayenge ✅\n• **Same vowel baar baar \"aaa\":** Swap hoga but koi farak nahi padega visually — still correct! ✅"
       },
       { 
         isMastery: true, 
         id: "m_merge_sorted",
         difficulty: "E", 
-        name: "Merge Sorted Array", 
+        name: "Q3. Merge Sorted Array", 
         companies: ["Amazon", "Microsoft", "Meta"], 
         link: "https://leetcode.com/problems/merge-sorted-array/",
-        problemStatement: "You are given two integer arrays `nums1` and `nums2`, sorted in non-decreasing order, and two integers `m` and `n`, representing the number of elements in `nums1` and `nums2` respectively.\nMerge `nums2` into `nums1` as one sorted array in-place.",
+        problemStatement: "Two sorted arrays nums1 and nums2 diye hain. nums1 mein already m+n size ki jagah hai — pehle m elements real hain, baaki n slots 0 se filled hain. Hume dono ko merge karke sorted result nums1 mein hi store karna hai.",
         testCases: [
-          { input: "nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3", output: "[1,2,2,3,5,6]" }
+          { input: "nums1 = [1,2,3,0,0,0], m=3, nums2 = [2,5,6], n=3", output: "[1,2,2,3,5,6]" }
         ],
         solutions: [
           {
             type: "Brute Force",
-            concept: "Dono arrays ko merge karke ek naya array banao aur use sort kardo.",
-            code: `def merge(nums1, m, nums2, n):
-    # Copy nums2 to the end of nums1
+            concept: "nums2 ko nums1 ke end mein copy karo aur fir pure array ko sort kardo.",
+            code: `def mergeBrute(nums1, m, nums2, n):
     for i in range(n):
         nums1[m + i] = nums2[i]
-    # Sort the combined array
     nums1.sort()`,
             complexity: "Time: O((m+n) log (m+n)), Space: O(1)"
           },
           {
             type: "Optimal (Three Pointer)",
-            concept: "Peeche se (end se) elements ko compare karo aur `nums1` ke khali space mein bharte jao. Isse overwriting nahi hogi.",
-            code: `def merge(nums1, m, nums2, n):
-    # p1, p2 are pointers for original elements
-    # p is the pointer for the write location
-    p1, p2, p = m - 1, n - 1, m + n - 1
-    
-    while p1 >= 0 and p2 >= 0:
-        if nums1[p1] > nums2[p2]:
-            nums1[p] = nums1[p1]
-            p1 -= 1
-        else:
+            concept: "The Trick — Fill from the Back! 🔑 Agar hum front se fill karte toh nums1 ke elements overwrite ho jaate. Isliye hum end se shuru karte hain — sabse bada element pehle place karo at position m+n-1, phir peeche aate jao.",
+            code: `class Solution:
+    def merge(self, nums1: list[int], m: int, nums2: list[int], n: int) -> None:
+        p1 = m - 1
+        p2 = n - 1
+        p = m + n - 1
+
+        while p1 >= 0 and p2 >= 0:
+            if nums1[p1] > nums2[p2]:
+                nums1[p] = nums1[p1]
+                p1 -= 1
+            else:
+                nums1[p] = nums2[p2]
+                p2 -= 1
+            p -= 1
+
+        # Copy remaining elements of nums2 if any
+        while p2 >= 0:
             nums1[p] = nums2[p2]
             p2 -= 1
-        p -= 1
-        
-    # Copy remaining elements from nums2
-    while p2 >= 0:
-        nums1[p] = nums2[p2]
-        p2 -= 1; p -= 1`,
+            p -= 1`,
             dryRun: [
-              "**Step 1: Compare Ends**<br>• **State:** nums1=[1,2,3,0,0,0], nums2=[2,5,6], p1=2 (val 3), p2=2 (val 6), write=5<br>• **Action:** 6 > 3. Write 6 at index 5. Move p2 and write pointer.<br>• **Result:** nums1=[...,6], p2=1 (5), write=4",
-              "**Step 2: Next Largest**<br>• **State:** p1=2 (3), p2=1 (5), write=4<br>• **Action:** 5 > 3. Write 5 at index 4. Move p2 and write pointer.<br>• **Result:** nums1=[...,5,6], p2=0 (2), write=3",
-              "**Step 3: Overlap**<br>• **State:** p1=2 (3), p2=0 (2), write=3<br>• **Action:** 3 > 2. Write 3 at index 3. Move p1 and write pointer.<br>• **Result:** nums1=[1,2,3,3,5,6], p1=1 (2), write=2"
+              "**Step 1: Write 6**<br>• **State:** p1=2 (3), p2=2 (6), p=5<br>• **Action:** Compare nums1[p1] (3) vs nums2[p2] (6). 6 is larger. Write 6 at nums1[p].<br>• **Result:** nums1=[1,2,3,0,0,6], p1=2, p2=1, p=4",
+              "**Step 2: Write 5**<br>• **State:** p1=2 (3), p2=1 (5), p=4<br>• **Action:** Compare 3 vs 5. 5 is larger. Write 5 at nums1[p].<br>• **Result:** nums1=[1,2,3,0,5,6], p1=2, p2=0, p=3",
+              "**Step 3: Write 3**<br>• **State:** p1=2 (3), p2=0 (2), p=3<br>• **Action:** Compare 3 vs 2. 3 is larger. Write 3 at nums1[p].<br>• **Result:** nums1=[1,2,3,3,5,6], p1=1, p2=0, p=2",
+              "**Step 4: Write 2 & Stop**<br>• **State:** p1=1 (2), p2=0 (2), p=2<br>• **Action:** Compare 2 vs 2. Write 2 from nums2 at nums1[p]. p2 becomes -1. Loop finishes.<br>• **Result:** nums1=[1,2,2,3,5,6] (Sorted!)"
             ],
             complexity: "Time: O(m+n), Space: O(1)"
           }
         ],
-        importantNotes: "• **Key Logic:** **Backward Two-Pointer** approach tab use karo jab array mein peeche extra space ho. Isse shift karne ki zaroorat nahi padti."
+        importantNotes: "• **nums2 empty hai n=0:** p2 = -1 start se, pehla loop hi nahi chalta, nums1 as-is rehta hai ✅\n• **nums1 empty hai m=0:** p1 = -1, sirf second while p2 >= 0 loop chalta hai, saara nums2 copy ho jaata hai ✅\n• **nums2 ke saare elements nums1 se bade hain:** p1 pehle exhaust hoga, phir bache hue nums2 elements copy ho jayenge ✅\n• **nums2 ke saare elements nums1 se chote hain:** p2 pehle exhaust hoga, nums1 wale elements apni jagah pe pehle se hain — kuch karna nahi ✅\n• **Negative numbers:** Comparison same tarah kaam karta hai, koi issue nahi ✅"
       },
       { 
         isMastery: true, 
