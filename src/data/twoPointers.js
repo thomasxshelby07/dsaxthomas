@@ -19,6 +19,52 @@ export const twoPointersData = {
     {
       num: "Q1",
       diff: "easy",
+      title: "Reverse String",
+      companies: ["Amazon", "Google", "Apple", "Adobe"],
+      lcLink: "https://leetcode.com/problems/reverse-string/",
+      lcNum: "LeetCode #344",
+      problem: [
+        "Write a function that reverses a string. The input string is given as an array of characters `s`.",
+        "You must do this by modifying the input array in-place with O(1) extra memory."
+      ],
+      testCases: [
+        { input: 's = ["h","e","l","l","o"]', output: '["o","l","l","e","h"]', note: "swap in-place" }
+      ],
+      concept: [
+        "<strong>Two Pointers:</strong> Ek pointer starting index `left=0` par aur dusra pointer ending index `right=len(s)-1` par hoga.",
+        "• Jab tak `left < right` hai, hum dono positions ke elements ko in-place swap karenge.",
+        "• Swap karne ke baad, `left` pointer ko aage badhaenge (`left++`) aur `right` pointer ko peeche laenge (`right--`)."
+      ],
+      dryRun: [
+        {
+          step: "Pointers Placement",
+          state: "left=0 ('h'), right=4 ('o') | s=['h','e','l','l','o']",
+          action: "s[0] aur s[4] ko swap karo. left++, right--"
+        },
+        {
+          step: "Swapping Middle",
+          state: "left=1 ('e'), right=3 ('l') | s=['o','e','l','l','h']",
+          action: "s[1] aur s[3] ko swap karo. left++, right--"
+        },
+        {
+          step: "Meet in Middle",
+          state: "left=2 ('l'), right=2 ('l') | s=['o','l','l','e','h']",
+          action: "left < right false ho gayi. Loop finished!"
+        }
+      ],
+      code: `def reverseString(self, s: List[str]) -> None:
+    left, right = 0, len(s) - 1
+    while left < right:
+        s[left], s[right] = s[right], s[left]
+        left += 1
+        right -= 1`,
+      timeComp: "O(n)",
+      spaceComp: "O(1)",
+      note: "• **Interview Pro-Tip:** Swapping tab tak hi chalni chahiye jab tak pointers meet nahi karte (`left < right`). Agar loop `left <= right` tak chalaya toh center element khud se swap ho jayega, jo redundant hai."
+    },
+    {
+      num: "Q2",
+      diff: "easy",
       title: "Two Sum II — Sorted Array",
       companies: ["Amazon", "Google"],
       lcLink: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
@@ -69,7 +115,7 @@ export const twoPointersData = {
       note: "The sorted property is key. We never visit a pair more than once."
     },
     {
-      num: "Q2",
+      num: "Q3",
       diff: "medium",
       title: "Container With Most Water",
       companies: ["Amazon", "Google", "Meta"],
@@ -123,7 +169,7 @@ export const twoPointersData = {
       note: "Moving the shorter side is the only way to potentially increase height enough to offset the decreasing width."
     },
     {
-      num: "Q3",
+      num: "Q4",
       diff: "medium",
       title: "3Sum",
       companies: ["Google", "Amazon", "Meta", "Microsoft"],
@@ -185,7 +231,7 @@ export const twoPointersData = {
       note: "Sorting takes O(n log n), while nested search takes O(n²)."
     },
     {
-      num: "Q4",
+      num: "Q5",
       diff: "medium",
       title: "3Sum Closest",
       companies: ["Amazon", "Bloomberg"],
@@ -244,7 +290,7 @@ export const twoPointersData = {
       note: "Early exit if sum equals target is a great optimization."
     },
     {
-      num: "Q5",
+      num: "Q6",
       diff: "medium",
       title: "4Sum",
       companies: ["Amazon", "Microsoft"],
@@ -295,7 +341,7 @@ export const twoPointersData = {
       note: "The O(n³) complexity is optimal for this problem."
     },
     {
-      num: "Q6",
+      num: "Q7",
       diff: "easy",
       title: "Valid Palindrome",
       companies: ["Meta", "Microsoft", "Amazon"],
@@ -342,7 +388,7 @@ export const twoPointersData = {
       note: "The <code>isalnum()</code> method is very useful for cleaning input on-the-fly."
     },
     {
-      num: "Q7",
+      num: "Q8",
       diff: "easy",
       title: "Valid Palindrome II",
       companies: ["Meta", "Google"],
@@ -392,7 +438,7 @@ export const twoPointersData = {
       note: "Checking two substrings adds O(n) + O(n), which is still O(n)."
     },
     {
-      num: "Q8",
+      num: "Q9",
       diff: "hard",
       title: "Trapping Rain Water",
       companies: ["Google", "Amazon", "Microsoft", "Meta"],

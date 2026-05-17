@@ -28,7 +28,7 @@ export const patternsData = [
         id: "m_rev_str",
         difficulty: "E", 
         name: "Reverse String", 
-        companies: ["Amazon", "Google", "Apple"], 
+        companies: ["Amazon", "Google", "Apple", "Adobe"], 
         link: "https://leetcode.com/problems/reverse-string/",
         problemStatement: "Write a function that reverses a string. The input string is given as an array of characters `s`.\nYou must do this by modifying the input array in-place with O(1) extra memory.",
         testCases: [
@@ -37,33 +37,42 @@ export const patternsData = [
         solutions: [
           {
             type: "Brute Force",
-            concept: "Array ke dono ends se characters ko swap karte huye middle ki taraf aao. Isse bina extra memory ke string reverse ho jayegi.",
-            code: `def reverseString(s):
-    # Python slicing is O(N) space
-    res = s[::-1]
+            concept: "String ko reverse karne ka sabse sidha tarika hai ki hum ek extra array/list banayein aur usme reverse order mein copy karein.\n• Python mein slicing `s[::-1]` use karke hum ek reversed list bana sakte hain.\n• Lekin yeh O(N) extra space lega jo ki space constraint (O(1)) ko violate karta hai. Par hum isko baseline samajhne ke liye likh sakte hain.",
+            code: `def reverseStringBrute(s):
+    # Python slicing se ek nayi reversed list banegi (O(N) space)
+    reversed_list = s[::-1]
+    
+    # Original array 's' ko elements copy karke update karenge
     for i in range(len(s)):
-        s[i] = res[i]`,
+        s[i] = reversed_list[i]`,
             complexity: "Time: O(N), Space: O(N)"
           },
           {
             type: "Optimal (Two Pointer)",
-            concept: "Dono pointers ko swap karo aur ek-ek step andar move karo. Yeh O(1) space ka best tarika hai.",
-            code: `def reverseString(s):
-    l, r = 0, len(s) - 1
-    while l < r:
-        # Swap in-place
-        s[l], s[r] = s[r], s[l]
-        l += 1
-        r -= 1`,
+            concept: "Hum **Two Pointers** technique use karenge — ek pointer starting index `left=0` par aur dusra pointer ending index `right=len(s)-1` par hoga.\n• Jab tak `left < right` hai, hum dono positions ke elements ko in-place swap karenge.\n• Swap karne ke baad, `left` pointer ko aage badhaenge (`left += 1`) aur `right` pointer ko peeche laenge (`right -= 1`).\n• Isse bina kisi extra array ke original string modify ho jayegi aur space complexity **O(1)** rahegi.",
+            code: `class Solution:
+    def reverseString(self, s: List[str]) -> None:
+        # Pointers ko boundaries par initialize karo
+        left, right = 0, len(s) - 1
+        
+        # Jab tak pointers cross nahi hote, tab tak loop chalao
+        while left < right:
+            # Elegant Pythonic in-place swap
+            s[left], s[right] = s[right], s[left]
+            
+            # Left pointer ko aage badao
+            left += 1
+            # Right pointer ko peeche lao
+            right -= 1`,
             dryRun: [
-              "**Step 1: Start**<br>• **State:** s=['h','e','l','l','o'], L=0 ('h'), R=4 ('o')<br>• **Action:** Swap s[0] and s[4]. Move L to 1, R to 3.<br>• **Result:** s=['o','e','l','l','h']",
-              "**Step 2: Middle Swap**<br>• **State:** s=['o','e','l','l','h'], L=1 ('e'), R=3 ('l')<br>• **Action:** Swap s[1] and s[3]. Move L to 2, R to 2.<br>• **Result:** s=['o','l','l','e','h']",
-              "**Step 3: Finish**<br>• **State:** L=2, R=2<br>• **Action:** L is no longer < R. Stop loop.<br>• **Result:** Final reversed array: ['o','l','l','e','h']"
+              "**Step 1: Pointers Placement**<br>• **State:** `left=0` ('h'), `right=4` ('o')<br>• **Array:** ['h','e','l','l','o']<br>• **Action:** Dono pointers ke characters ko swap karo aur pointers ko move karo: `left`++ (1), `right`-- (3).<br>• **New Array:** ['o','e','l','l','h']",
+              "**Step 2: Swapping Middle Elements**<br>• **State:** `left=1` ('e'), `right=3` ('l')<br>• **Array:** ['o','e','l','l','h']<br>• **Action:** Swap `s[1]` aur `s[3]`. Pointers ko aage move karo: `left`++ (2), `right`-- (2).<br>• **New Array:** ['o','l','l','e','h']",
+              "**Step 3: Meet in Middle (End)**<br>• **State:** `left=2` ('l'), `right=2` ('l')<br>• **Action:** `left < right` condition false ho gayi (dono same element par hain). Loop khatam!<br>• **Array:** ['o','l','l','e','h']"
             ],
             complexity: "Time: O(N), Space: O(1)"
           }
         ],
-        importantNotes: "• **Interview Tip:** In-place modification ke liye hamesha **Two Pointer** technique standard hai. Space efficiency (O(1)) iski sabse badi strength hai."
+        importantNotes: "• **Key Takeaway:** Swapping tab tak hi chalni chahiye jab tak pointers meet nahi karte (`left < right`). Agar loop `left <= right` tak chalaya toh center element khud se hi swap ho jayega, jo ki redundant hai.\n• **Memory Constraint:** Kuch programming languages mein strings *immutable* (non-changeable) hote hain, par LeetCode par array of characters `s` diya hai toh easily in-place swapping ho sakti hai.\n• **Interview Pro-Tip:** Hamesha interviewers ko batao ki `s.reverse()` internal function use karne ke bajaye custom swap logic likhna correct basic understanding ko prove karta hai!"
       },
       { 
         isMastery: true, 
