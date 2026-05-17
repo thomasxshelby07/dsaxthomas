@@ -104,7 +104,7 @@ const QuestionList = ({ questions, onSelectQuestion, solvedQuestions, onToggleSo
   return (
     <div className="question-list-container">
       {masteryQuestions.length > 0 && renderTable(masteryQuestions, "Pattern Mastery (Confidence Boosters)", true)}
-      {regularQuestions.length > 0 && renderTable(regularQuestions, "Practice Questions", false)}
+      {/* {regularQuestions.length > 0 && renderTable(regularQuestions, "Practice Questions", false)} */}
     </div>
   );
 };
