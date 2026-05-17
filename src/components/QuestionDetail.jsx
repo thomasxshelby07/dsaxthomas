@@ -22,6 +22,80 @@ const QuestionDetail = ({ question, onBack }) => {
     );
   };
 
+  // Helper to render premium modular concept cards
+  const renderPremiumConcept = (conceptText) => {
+    if (!conceptText) return null;
+
+    if (!conceptText.includes('### ')) {
+      return (
+        <div className="concept-text">
+          {conceptText.split('\n').map((line, i) => (
+            <p key={i}>{parseMarkdown(line)}</p>
+          ))}
+        </div>
+      );
+    }
+
+    const parts = conceptText.split('### ');
+    const sections = [];
+
+    if (parts[0].trim()) {
+      sections.push({
+        title: "Introduction",
+        content: parts[0].trim()
+      });
+    }
+
+    for (let i = 1; i < parts.length; i++) {
+      const lines = parts[i].split('\n');
+      const title = lines[0].trim();
+      const content = lines.slice(1).join('\n').trim();
+      sections.push({ title, content });
+    }
+
+    return (
+      <div className="premium-concept-grid">
+        {sections.map((sec, sIdx) => {
+          let cardClass = "concept-card";
+          let icon = "💡";
+
+          if (sec.title.toLowerCase().includes("approach")) {
+            cardClass = "concept-card approach-card";
+            icon = "🔑";
+          } else if (sec.title.toLowerCase().includes("algorithm")) {
+            cardClass = "concept-card algorithm-card";
+            icon = "⚙️";
+          } else if (sec.title.toLowerCase().includes("explanation")) {
+            cardClass = "concept-card explanation-card";
+            icon = "📖";
+          }
+
+          return (
+            <div key={sIdx} className={cardClass}>
+              <h3 className="card-header-title">
+                <span className="card-icon">{icon}</span> {sec.title}
+              </h3>
+              <div className="card-body-content">
+                {sec.content.split('\n').map((line, lIdx) => {
+                  const trimmed = line.trim();
+                  if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+                    return (
+                      <div key={lIdx} className="bullet-row">
+                        <span className="bullet-dot">•</span>
+                        <span className="bullet-text">{parseMarkdown(trimmed.replace(/^[*•-]\s*/, ''))}</span>
+                      </div>
+                    );
+                  }
+                  return <p key={lIdx}>{parseMarkdown(line)}</p>;
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   // Handle both old single-solution and new multi-solution structures
   const solutions = question.solutions || (question.code ? [{
     type: "Solution",
@@ -108,11 +182,7 @@ const QuestionDetail = ({ question, onBack }) => {
           {currentSolution.concept && (
             <section className="qd-section concept-section">
               <h2 className="section-title">{currentSolution.type} Logic</h2>
-              <div className="concept-text">
-                 {currentSolution.concept.split('\n').map((line, i) => (
-                   <p key={i}>{parseMarkdown(line)}</p>
-                 ))}
-              </div>
+              {renderPremiumConcept(currentSolution.concept)}
             </section>
           )}
 
@@ -248,9 +318,18 @@ const QuestionDetail = ({ question, onBack }) => {
         <section className="qd-section notes-section">
           <h2 className="section-title">Important Notes / Learnings</h2>
           <div className="notes-box">
-             {question.importantNotes.split('\n').map((line, i) => (
-               <p key={i}>{parseMarkdown(line)}</p>
-             ))}
+             {question.importantNotes.split('\n').map((line, i) => {
+               const trimmed = line.trim();
+               if (trimmed.startsWith('•') || trimmed.startsWith('*') || trimmed.startsWith('-')) {
+                 return (
+                   <div key={i} className="note-row">
+                     <span className="note-icon">✅</span>
+                     <span className="note-text">{parseMarkdown(trimmed.replace(/^[*•-]\s*/, ''))}</span>
+                   </div>
+                 );
+               }
+               return <p key={i}>{parseMarkdown(line)}</p>;
+             })}
           </div>
         </section>
       )}

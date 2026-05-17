@@ -625,4 +625,129 @@ pre[class*="language-"] {
   transform: scale(1.1);
 }
 
+/* Premium Concept Grid and Cards */
+.premium-concept-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.concept-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: var(--transition);
+}
+
+.concept-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Custom card theme colors */
+.approach-card {
+  border-left: 4px solid var(--blue);
+  background: linear-gradient(135deg, rgba(88, 166, 255, 0.03), rgba(13, 17, 23, 0.8));
+}
+.approach-card .card-header-title {
+  color: var(--blue);
+  background: rgba(88, 166, 255, 0.05);
+}
+
+.algorithm-card {
+  border-left: 4px solid var(--orange);
+  background: linear-gradient(135deg, rgba(240, 136, 62, 0.03), rgba(13, 17, 23, 0.8));
+}
+.algorithm-card .card-header-title {
+  color: var(--orange);
+  background: rgba(240, 136, 62, 0.05);
+}
+
+.explanation-card {
+  border-left: 4px solid var(--purple);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.03), rgba(13, 17, 23, 0.8));
+}
+.explanation-card .card-header-title {
+  color: var(--purple);
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.card-body-content {
+  padding: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.card-body-content p {
+  margin-bottom: 0.75rem;
+}
+
+.card-body-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Bullet Row list items in cards */
+.bullet-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.bullet-dot {
+  color: var(--blue);
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.algorithm-card .bullet-dot {
+  color: var(--orange);
+}
+
+.explanation-card .bullet-dot {
+  color: var(--purple);
+}
+
+.bullet-text {
+  flex: 1;
+}
+
+/* Important Notes checklist */
+.note-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.note-icon {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.note-text {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
 
