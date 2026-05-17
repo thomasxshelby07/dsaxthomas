@@ -189,38 +189,47 @@ const QuestionDetail = ({ question, onBack }) => {
           {currentSolution.dryRunTable ? (
             <section className="qd-section dryrun-section">
               <h2 className="section-title">Step-by-Step Dry Run</h2>
-              <div className="dryrun-table-wrapper">
-                <table className="dryrun-table-view">
-                  <thead>
-                    <tr>
-                      {currentSolution.dryRunTable.headers.map((h, i) => (
-                        <th key={i}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentSolution.dryRunTable.rows.map((row, rIdx) => (
-                      <tr key={rIdx}>
-                        {row.map((cell, cIdx) => (
-                          <td key={cIdx}>
-                            {cell.trim().startsWith('[') && cell.trim().endsWith(']') ? (
-                              <div className="visual-array small">
-                                {cell.replace(/[\[\]]/g, '').split(',').map((item, idx) => (
-                                  <div key={idx} className="array-box mini">
-                                    {item.trim().replace(/['"]/g, '')}
+              {(Array.isArray(currentSolution.dryRunTable) ? currentSolution.dryRunTable : [currentSolution.dryRunTable]).map((table, tIdx) => (
+                <div key={tIdx} className="dryrun-table-container" style={{ marginBottom: '2rem' }}>
+                  {table.title && (
+                    <h3 className="dryrun-table-title" style={{ fontSize: '1.05rem', color: 'var(--blue)', marginBottom: '0.85rem', fontWeight: '700' }}>
+                      {table.title}
+                    </h3>
+                  )}
+                  <div className="dryrun-table-wrapper">
+                    <table className="dryrun-table-view">
+                      <thead>
+                        <tr>
+                          {table.headers.map((h, i) => (
+                            <th key={i}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {table.rows.map((row, rIdx) => (
+                          <tr key={rIdx}>
+                            {row.map((cell, cIdx) => (
+                              <td key={cIdx}>
+                                {cell.trim().startsWith('[') && cell.trim().endsWith(']') ? (
+                                  <div className="visual-array small">
+                                    {cell.replace(/[\[\]]/g, '').split(',').map((item, idx) => (
+                                      <div key={idx} className="array-box mini">
+                                        {item.trim().replace(/['"]/g, '')}
+                                      </div>
+                                    ))}
                                   </div>
-                                ))}
-                              </div>
-                            ) : parseMarkdown(cell)}
-                          </td>
+                                ) : parseMarkdown(cell)}
+                              </td>
+                            ))}
+                          </tr>
                         ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
             </section>
-          ) : currentSolution.dryRun && currentSolution.dryRun.length > 0 && (
+          ) : currentSolution.dryRun && currentSolution.dryRun.length > 0 ? (
             <section className="qd-section dryrun-section">
               <h2 className="section-title">Step-by-Step Dry Run</h2>
               <div className="dryrun-steps">
@@ -289,7 +298,7 @@ const QuestionDetail = ({ question, onBack }) => {
                 })}
               </div>
             </section>
-          )}
+          ) : null}
 
           {currentSolution.code && (
             <section className="qd-section code-section">

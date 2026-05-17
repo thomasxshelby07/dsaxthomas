@@ -73,9 +73,10 @@ export const patternsData = [
         name: "Q2. Reverse Vowels of a String", 
         companies: ["Google", "Amazon"], 
         link: "https://leetcode.com/problems/reverse-vowels-of-a-string/",
-        problemStatement: "Given a string s, reverse only the vowels (a, e, i, o, u — both upper and lower case). All consonants stay exactly where they are.",
+        problemStatement: "Given a string `s`, reverse **only the vowels** (`a, e, i, o, u` — both upper and lower case). All consonants stay exactly where they are, only vowels ki position reverse hogi.",
         testCases: [
-          { input: 's = "IceCreAm"', output: '"AceCreIm"' }
+          { input: 's = "IceCreAm"', output: '"AceCreIm"' },
+          { input: 's = "leetcode"', output: '"leotcede"' }
         ],
         solutions: [
           {
@@ -96,7 +97,7 @@ export const patternsData = [
           },
           {
             type: "Optimal (Two Pointer)",
-            concept: "### Approach\nTwo Pointers — same as Reverse String, but with a twist. Before swapping, we skip non-vowels on both sides. Only swap when both pointers are pointing at vowels.\n\n### Algorithm\n1. Convert string to a list (strings are immutable in Python)\n2. Set **left = 0**, **right = len(s) - 1**\n3. While **left < right**:\n   • Move **left** forward until it hits a vowel\n   • Move **right** backward until it hits a vowel\n   • If **left < right**, swap and move both pointers inward\n4. Join and return the list as a string\n\n### Line-by-Line Explanation\n* \`vowels = set(\"aeiouAEIOU\")\` → O(1) lookup ke liye set use kiya, both cases covered\n* \`s = list(s)\` → Python strings immutable hoti hain, isliye list mein convert kiya\n* \`left, right = 0, len(s) - 1\` → Dono pointers array ke dono ends pe\n* \`while left < right and s[left] not in vowels: left += 1\` → Left pointer tab tak aage badhao jab tak vowel na mile\n* \`while left < right and s[right] not in vowels: right -= 1\` → Right pointer tab tak peeche lao jab tak vowel na mile\n* \`s[left], s[right] = s[right], s[left]\` → Dono vowels ko swap karo\n* \`left += 1, right -= 1\` → Dono pointers ko andar ki taraf badhao\n* \`return \"\".join(s)\` → List ko wapas string mein convert karo",
+            concept: "### Approach\n**Two Pointers — but vowels pe hi ruko! 🔑**\n\nBilkul Reverse String jaisa, but ek twist hai — before swapping, dono pointers ko vowel milne tak skip karte hain. Jab dono vowel pe hoon tabhi swap karo.\n\n### Algorithm\n1. String ko list mein convert karo (Python strings immutable hain)\n2. `left = 0`, `right = len(s) - 1` set karo\n3. Jab tak `left < right`:\n   - `left` ko aage badhao jab tak vowel na mile\n   - `right` ko peeche lao jab tak vowel na mile\n   - Dono vowel pe hain → swap karo, dono pointers andar lao\n4. List ko wapas string mein join karo\n\n### Line-by-Line Explanation\n* **vowels = set(\"aeiouAEIOU\")** → Set use kiya O(1) lookup ke liye, dono cases cover hain\n* **s = list(s)** → Python strings immutable hoti hain, isliye pehle list banao\n* **left, right = 0, len(s) - 1** → Dono pointers array ke dono ends pe\n* **while left < right and s[left] not in vowels: left += 1** → Left pointer tab tak skip karo jab tak vowel na mile\n* **while left < right and s[right] not in vowels: right -= 1** → Right pointer tab tak skip karo jab tak vowel na mile\n* **s[left], s[right] = s[right], s[left]** → Dono vowels ko swap karo\n* **left += 1**, **right -= 1** → Dono pointers andar ki taraf aao\n* **return \"\".join(s)** → List ko wapas string mein convert karo",
             code: `class Solution:
     def reverseVowels(self, s: str) -> str:
         vowels = set("aeiouAEIOU")
@@ -114,11 +115,25 @@ export const patternsData = [
                 right -= 1
 
         return "".join(s)`,
-            dryRun: [
-              "**Vowels Map**<br>• **Index:** 0 (I-✅), 1 (c-❌), 2 (e-✅), 3 (C-❌), 4 (r-❌), 5 (e-✅), 6 (A-✅), 7 (m-❌)<br>• **Action:** Identify vowel indices.",
-              "**Step 1: Swap 1**<br>• **State:** left=0 ('I'), right=7 ('m')<br>• **Action:** right skips 'm' (not a vowel) and stops at index 6 ('A'). Swap 'I' and 'A'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left moves to 1, right moves to 5.",
-              "**Step 2: Swap 2**<br>• **State:** left=1 ('c'), right=5 ('e')<br>• **Action:** left skips 'c' (not a vowel) and stops at index 2 ('e'). Swap 'e' and 'e'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left moves to 3, right moves to 4.",
-              "**Step 3: Stop**<br>• **State:** left=3 ('C'), right=4 ('r')<br>• **Action:** left skips 'C' and 'r' to stop at index 5. But now left (5) >= right (4). STOP.<br>• **Output:** 'AceCreIm' ✅"
+            dryRunTable: [
+              {
+                title: "Input 1: s = \"IceCreAm\" (Vowel Indices: I at 0, e at 2, e at 5, A at 6)",
+                headers: ["Step", "left", "right", "Compare", "Action", "String (s)"],
+                rows: [
+                  ["1", "0 (I)", "7 → skip 'm' → 6 (A)", "I & A both vowels", "Swap I ↔ A, left++, right--", "\"AceCreIm\""],
+                  ["2", "1 → skip 'c' → 2 (e)", "5 (e)", "e & e both vowels", "Swap e ↔ e, left++, right--", "\"AceCreIm\""],
+                  ["3", "3 → skip 'C','r' → 5", "4", "left >= right", "STOP", "\"AceCreIm\""]
+                ]
+              },
+              {
+                title: "Input 2: s = \"leetcode\" (Vowel Indices: e at 1, e at 2, o at 5, e at 7)",
+                headers: ["Step", "left", "right", "Compare", "Action", "String (s)"],
+                rows: [
+                  ["1", "0 → skip 'l' → 1 (e)", "7 (e)", "e & e both vowels", "Swap e ↔ e, left++, right--", "\"leetcode\""],
+                  ["2", "2 (e)", "6 → skip 'd' → 5 (o)", "e & o both vowels", "Swap e ↔ o, left++, right--", "\"leotcede\""],
+                  ["3", "3 → skip 't','c' → 5", "4", "left >= right", "STOP", "\"leotcede\""]
+                ]
+              }
             ],
             complexity: "Time: O(n) — Each character is visited at most once by each pointer\nSpace: O(n) — List conversion of the string takes O(n) space"
           }
