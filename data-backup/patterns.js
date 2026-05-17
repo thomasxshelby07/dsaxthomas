@@ -46,29 +46,25 @@ export const patternsData = [
           },
           {
             type: "Optimal (Two Pointer)",
-            concept: "We use the Two Pointers technique. One pointer starts from the left, one from the right. We keep swapping characters and move both pointers inward until they meet in the middle.",
+            concept: "### Approach\nWe use the Two Pointers technique. One pointer starts from the left, one from the right. We keep swapping characters and move both pointers inward until they meet in the middle.\n\n### Algorithm\n* Set **left = 0** and **right = len(s) - 1**\n* While **left < right**:\n  * Swap **s[left]** and **s[right]**\n  * Move **left** forward by 1\n  * Move **right** backward by 1\n\nArray is now reversed in-place!\n\n### Line-by-Line Explanation\n* \`left, right = 0, len(s) - 1\` → Initialize two pointers at both ends of the array\n* \`while left < right:\` → Keep looping until the pointers meet or cross\n* \`s[left], s[right] = s[right], s[left]\` → Swap the two characters\n* \`left += 1\` → Move left pointer one step inward\n* \`right -= 1\` → Move right pointer one step inward",
             code: `class Solution:
     def reverseString(self, s: list[str]) -> None:
-        # Pointers ko boundaries par initialize karo
         left, right = 0, len(s) - 1
 
-        # Jab tak pointers cross nahi hote, tab tak loop chalao
         while left < right:
-            # Swap s[left] and s[right]
             s[left], s[right] = s[right], s[left]
-            # Move left pointer forward
             left += 1
-            # Move right pointer backward
             right -= 1`,
             dryRun: [
-              "**Step 1: Start**<br>• **State:** left=0 ('H'), right=5 ('h')<br>• **Action:** Initial pointers set. Swap s[0] and s[5].<br>• **Result:** Array is ['h','a','n','n','a','H'], left moves to 1, right moves to 4.",
-              "**Step 2: Swap 2**<br>• **State:** left=1 ('a'), right=4 ('a')<br>• **Action:** Swap s[1] and s[4] (both are 'a').<br>• **Result:** Array remains ['h','a','n','n','a','H'], left moves to 2, right moves to 3.",
-              "**Step 3: Stop**<br>• **State:** left=2 ('n'), right=3 ('n')<br>• **Action:** left >= right (pointers met/crossed). STOP.<br>• **Result:** Final array: ['h','a','n','n','a','H']"
+              "**Step 1: Start**<br>• **State:** left=0 ('H'), right=5 ('h')<br>• **Array:** ['H','a','n','n','a','h']<br>• **Action:** Initial pointers set at both ends.",
+              "**Step 2: Swap 1**<br>• **State:** left=0 → 1, right=5 → 4<br>• **Array:** ['h','a','n','n','a','H']<br>• **Action:** Swap s[0] and s[5]. Pointers move inward.",
+              "**Step 3: Swap 2**<br>• **State:** left=1 → 2, right=4 → 3, s[left]='a', s[right]='a'<br>• **Array:** ['h','a','n','n','a','H']<br>• **Action:** Swap s[1] and s[4]. Pointers move inward.",
+              "**Step 4: Stop**<br>• **State:** left=2 → 3, right=3 → 2, left >= right<br>• **Array:** ['h','a','n','n','a','H']<br>• **Action:** left and right crossed. STOP.<br>• **Output:** ['h','a','n','n','a','H'] ✅"
             ],
-            complexity: "Time: O(N), Space: O(1)"
+            complexity: "Time: O(n) — We only traverse half the array, but asymptotically it's O(n)\nSpace: O(1) — No extra array created, only two pointer variables used"
           }
         ],
-        importantNotes: "• **Single character [\"a\"]:** left aur right dono same index pe hain, loop chalega hi nahi — seedha correct answer! ✅\n• **Even length array:** Pointers kabhi cross nahi karte, exactly beech mein ruk jaate hain ✅\n• **Odd length array:** Beech wala character apni jagah pe hi rehta hai, usse touch karne ki zaroorat hi nahi ✅\n• **Already reversed array:** Algorithm ko koi farak nahi padta — woh toh bas swap karta rehega, result sahi hi aayega ✅\n• **Two characters [\"a\",\"b\"]:** Sirf ek swap hoga aur kaam khatam — seedha aur simple! ✅"
+        importantNotes: "• **Single character [\"a\"]:** left aur right dono same index pe hain, loop chalega hi nahi — seedha correct answer! ✅\n• **Even length array [\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]:** Pointers kabhi cross nahi karte, exactly beech mein ruk jaate hain ✅\n• **Odd length array [\"h\",\"e\",\"l\",\"l\",\"o\"]:** Beech wala character (l) apni jagah pe hi rehta hai, usse touch karne ki zaroorat hi nahi ✅\n• **Already reversed array:** Algorithm ko koi farak nahi padta — woh toh bas swap karta rehega, result sahi hi aayega ✅\n• **Two characters [\"a\",\"b\"]:** Sirf ek swap hoga aur kaam khatam — seedha aur simple! ✅"
       },
       { 
         isMastery: true, 
@@ -100,21 +96,18 @@ export const patternsData = [
           },
           {
             type: "Optimal (Two Pointer)",
-            concept: "Two Pointers — same as Reverse String, but with a twist. Before swapping, we skip non-vowels on both sides. Only swap when both pointers are pointing at vowels.",
+            concept: "### Approach\nTwo Pointers — same as Reverse String, but with a twist. Before swapping, we skip non-vowels on both sides. Only swap when both pointers are pointing at vowels.\n\n### Algorithm\n1. Convert string to a list (strings are immutable in Python)\n2. Set **left = 0**, **right = len(s) - 1**\n3. While **left < right**:\n   • Move **left** forward until it hits a vowel\n   • Move **right** backward until it hits a vowel\n   • If **left < right**, swap and move both pointers inward\n4. Join and return the list as a string\n\n### Line-by-Line Explanation\n* \`vowels = set(\"aeiouAEIOU\")\` → O(1) lookup ke liye set use kiya, both cases covered\n* \`s = list(s)\` → Python strings immutable hoti hain, isliye list mein convert kiya\n* \`left, right = 0, len(s) - 1\` → Dono pointers array ke dono ends pe\n* \`while left < right and s[left] not in vowels: left += 1\` → Left pointer tab tak aage badhao jab tak vowel na mile\n* \`while left < right and s[right] not in vowels: right -= 1\` → Right pointer tab tak peeche lao jab tak vowel na mile\n* \`s[left], s[right] = s[right], s[left]\` → Dono vowels ko swap karo\n* \`left += 1, right -= 1\` → Dono pointers ko andar ki taraf badhao\n* \`return \"\".join(s)\` → List ko wapas string mein convert karo",
             code: `class Solution:
     def reverseVowels(self, s: str) -> str:
-        vowels = set("aeiouAEIOU") # O(1) lookup set
-        s = list(s) # Python strings are immutable, convert to list
+        vowels = set("aeiouAEIOU")
+        s = list(s)
         left, right = 0, len(s) - 1
 
         while left < right:
-            # Move left forward until it hits a vowel
             while left < right and s[left] not in vowels:
                 left += 1
-            # Move right backward until it hits a vowel
             while left < right and s[right] not in vowels:
                 right -= 1
-            # Swap and move both pointers inward
             if left < right:
                 s[left], s[right] = s[right], s[left]
                 left += 1
@@ -122,11 +115,12 @@ export const patternsData = [
 
         return "".join(s)`,
             dryRun: [
-              "**Step 1: Swap 1**<br>• **State:** s='IceCreAm', left=0 ('I'), right=7 ('m')<br>• **Action:** right skips 'm' (not a vowel) and stops at index 6 ('A'). Swap 'I' and 'A'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left=1, right=5",
-              "**Step 2: Swap 2**<br>• **State:** left=1 ('c'), right=5 ('e')<br>• **Action:** left skips 'c' (not a vowel) and stops at index 2 ('e'). Swap 'e' and 'e'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left=3, right=4",
-              "**Step 3: Meet & Stop**<br>• **State:** left=3 ('C'), right=4 ('r')<br>• **Action:** left skips 'C' and 'r' to stop at index 5. But now left (5) >= right (4). STOP.<br>• **Result:** Final string: 'AceCreIm'"
+              "**Vowels Map**<br>• **Index:** 0 (I-✅), 1 (c-❌), 2 (e-✅), 3 (C-❌), 4 (r-❌), 5 (e-✅), 6 (A-✅), 7 (m-❌)<br>• **Action:** Identify vowel indices.",
+              "**Step 1: Swap 1**<br>• **State:** left=0 ('I'), right=7 ('m')<br>• **Action:** right skips 'm' (not a vowel) and stops at index 6 ('A'). Swap 'I' and 'A'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left moves to 1, right moves to 5.",
+              "**Step 2: Swap 2**<br>• **State:** left=1 ('c'), right=5 ('e')<br>• **Action:** left skips 'c' (not a vowel) and stops at index 2 ('e'). Swap 'e' and 'e'.<br>• **Result:** s=['A','c','e','C','r','e','I','m'], left moves to 3, right moves to 4.",
+              "**Step 3: Stop**<br>• **State:** left=3 ('C'), right=4 ('r')<br>• **Action:** left skips 'C' and 'r' to stop at index 5. But now left (5) >= right (4). STOP.<br>• **Output:** 'AceCreIm' ✅"
             ],
-            complexity: "Time: O(N), Space: O(N)"
+            complexity: "Time: O(n) — Each character is visited at most once by each pointer\nSpace: O(n) — List conversion of the string takes O(n) space"
           }
         ],
         importantNotes: "• **Koi vowel hi nahi \"bcdf\":** Dono pointers kabhi swap nahi karenge, string as-is return hogi ✅\n• **Saare vowels hain \"aeiou\":** Normal reverse hoga, exactly jaise pehli problem ✅\n• **Single character \"a\":** left == right from start, loop chalega hi nahi ✅\n• **Uppercase vowels \"IceCreAm\":** set(\"aeiouAEIOU\") mein dono cases hain, handle ho jayenge ✅\n• **Same vowel baar baar \"aaa\":** Swap hoga but koi farak nahi padega visually — still correct! ✅"
@@ -154,7 +148,7 @@ export const patternsData = [
           },
           {
             type: "Optimal (Three Pointer)",
-            concept: "The Trick — Fill from the Back! 🔑 Agar hum front se fill karte toh nums1 ke elements overwrite ho jaate. Isliye hum end se shuru karte hain — sabse bada element pehle place karo at position m+n-1, phir peeche aate jao.",
+            concept: "### Approach\nThe Trick — Fill from the Back! 🔑\nAgar hum front se fill karte toh nums1 ke elements overwrite ho jaate. Isliye hum end se shuru karte hain — sabse bada element pehle place karo at position m+n-1, phir peeche aate jao.\nThree pointers use karenge:\n• **p1** → nums1 ke last real element pe (m-1)\n• **p2** → nums2 ke last element pe (n-1)\n• **p** → nums1 ke last slot pe (m+n-1)\n\n### Algorithm\n* Set **p1 = m-1**, **p2 = n-1**, **p = m+n-1**\n* While **p1 >= 0** and **p2 >= 0**:\n  * Agar **nums1[p1] > nums2[p2]** → **nums1[p] = nums1[p1]**, **p1--**\n  * Warna → **nums1[p] = nums2[p2]**, **p2--**\n  * **p--**\n* Agar **p2 still remaining** → copy leftover **nums2** elements into **nums1**\n*(No need to handle leftover p1 — they're already in place!)*\n\n### Line-by-Line Explanation\n* \`p1 = m - 1\` → nums1 ka last real element\n* \`p2 = n - 1\` → nums2 ka last element\n* \`p = m + n - 1\` → nums1 ka last slot (yahan se fill karenge)\n* \`if nums1[p1] > nums2[p2]\` → Jo bada ho, usse pehle end mein rakh do\n* \`nums1[p] = nums1[p1]; p1 -= 1\` → nums1 wala element place kiya, pointer peeche lao\n* \`else: nums1[p] = nums2[p2]; p2 -= 1\` → nums2 wala element place kiya\n* \`p -= 1\` → Fill position ek peeche le jao\n* \`while p2 >= 0\` → Agar nums2 mein kuch bacha toh seedha copy kar do (ye elements already nums1 ke elements se chote hain)",
             code: `class Solution:
     def merge(self, nums1: list[int], m: int, nums2: list[int], n: int) -> None:
         p1 = m - 1
@@ -170,18 +164,17 @@ export const patternsData = [
                 p2 -= 1
             p -= 1
 
-        # Copy remaining elements of nums2 if any
         while p2 >= 0:
             nums1[p] = nums2[p2]
             p2 -= 1
             p -= 1`,
             dryRun: [
-              "**Step 1: Write 6**<br>• **State:** p1=2 (3), p2=2 (6), p=5<br>• **Action:** Compare nums1[p1] (3) vs nums2[p2] (6). 6 is larger. Write 6 at nums1[p].<br>• **Result:** nums1=[1,2,3,0,0,6], p1=2, p2=1, p=4",
-              "**Step 2: Write 5**<br>• **State:** p1=2 (3), p2=1 (5), p=4<br>• **Action:** Compare 3 vs 5. 5 is larger. Write 5 at nums1[p].<br>• **Result:** nums1=[1,2,3,0,5,6], p1=2, p2=0, p=3",
-              "**Step 3: Write 3**<br>• **State:** p1=2 (3), p2=0 (2), p=3<br>• **Action:** Compare 3 vs 2. 3 is larger. Write 3 at nums1[p].<br>• **Result:** nums1=[1,2,3,3,5,6], p1=1, p2=0, p=2",
-              "**Step 4: Write 2 & Stop**<br>• **State:** p1=1 (2), p2=0 (2), p=2<br>• **Action:** Compare 2 vs 2. Write 2 from nums2 at nums1[p]. p2 becomes -1. Loop finishes.<br>• **Result:** nums1=[1,2,2,3,5,6] (Sorted!)"
+              "**Step 1: Write 6**<br>• **State:** p1=2 (3), p2=2 (6), p=5<br>• **Action:** Compare 3 vs 6. 6 is larger. Write 6 at nums1[5]. Decrement p2.<br>• **Result:** nums1=[1,2,3,0,0,6], p1=2, p2=1, p=4",
+              "**Step 2: Write 5**<br>• **State:** p1=2 (3), p2=1 (5), p=4<br>• **Action:** Compare 3 vs 5. 5 is larger. Write 5 at nums1[4]. Decrement p2.<br>• **Result:** nums1=[1,2,3,0,5,6], p1=2, p2=0, p=3",
+              "**Step 3: Write 3**<br>• **State:** p1=2 (3), p2=0 (2), p=3<br>• **Action:** Compare 3 vs 2. 3 is larger. Write 3 at nums1[3]. Decrement p1.<br>• **Result:** nums1=[1,2,3,3,5,6], p1=1, p2=0, p=2",
+              "**Step 4: Write 2 & Stop**<br>• **State:** p1=1 (2), p2=0 (2), p=2<br>• **Action:** Compare 2 vs 2. Write 2 at nums1[2]. Decrement p2 to -1.<br>• **Result:** nums1=[1,2,2,3,5,6], p1=1, p2=-1, p=1. p2 < 0. STOP.<br>• **Output:** [1,2,2,3,5,6] ✅"
             ],
-            complexity: "Time: O(m+n), Space: O(1)"
+            complexity: "Time: O(m+n) — Har element exactly ek baar visit hota hai\nSpace: O(1) — Koi extra array nahi, sab in-place!"
           }
         ],
         importantNotes: "• **nums2 empty hai n=0:** p2 = -1 start se, pehla loop hi nahi chalta, nums1 as-is rehta hai ✅\n• **nums1 empty hai m=0:** p1 = -1, sirf second while p2 >= 0 loop chalta hai, saara nums2 copy ho jaata hai ✅\n• **nums2 ke saare elements nums1 se bade hain:** p1 pehle exhaust hoga, phir bache hue nums2 elements copy ho jayenge ✅\n• **nums2 ke saare elements nums1 se chote hain:** p2 pehle exhaust hoga, nums1 wale elements apni jagah pe pehle se hain — kuch karna nahi ✅\n• **Negative numbers:** Comparison same tarah kaam karta hai, koi issue nahi ✅"

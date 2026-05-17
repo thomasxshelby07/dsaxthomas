@@ -59,7 +59,7 @@ const Sidebar = ({ patterns, selectedId, onSelect, onClose, domain, onDomainChan
                   onClick={() => isGenerated && onSelect(p.id)}
                   title={!isGenerated ? "Coming Soon" : ""}
                 >
-                  <span className="pattern-num">{p.id}</span>
+                  <span className="pattern-num">Pattern {p.id}</span>
                   <span className="pattern-name">{p.name}</span>
                   {!isGenerated && <span className="lock-badge">🔒 Locked</span>}
                 </button>

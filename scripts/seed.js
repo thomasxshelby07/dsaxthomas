@@ -31,10 +31,12 @@ const seedDatabase = async () => {
       
       const unlockedQuestions = slicedQuestions.map((q, idx) => {
         const generatedId = q.id || `m_${pattern.id}_q${idx + 1}_${q.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+        const prefixedName = q.name.match(/^Q\d+\./) ? q.name : `Q${idx + 1}. ${q.name}`;
         
         return {
           ...q,
           id: generatedId,
+          name: prefixedName,
           problemStatement: q.problemStatement || `Given the input parameters, solve **${q.name}** optimally using the core rules of the **${pattern.name}** pattern. Click the official LeetCode link above to read the full description and submit your code.`,
           testCases: q.testCases && q.testCases.length > 0 ? q.testCases : [
             { input: "Standard Input", output: "Standard Output", explanation: "Click 'Solve on LeetCode' above to run against all edge-cases." }

@@ -48,9 +48,13 @@ const QuestionList = ({ questions, onSelectQuestion, solvedQuestions, onToggleSo
                   </td>
                   <td className="td-name">
                     {isGenerated ? (
-                      <button className="question-link" onClick={() => onSelectQuestion(q)}>{q.name}</button>
+                      <button className="question-link" onClick={() => onSelectQuestion(q)}>
+                        {q.name.match(/^Q\d+\./) ? q.name : `Q${idx + 1}. ${q.name}`}
+                      </button>
                     ) : (
-                      <span className="question-link static">{q.name} (Coming Soon)</span>
+                      <span className="question-link static">
+                        {q.name.match(/^Q\d+\./) ? q.name : `Q${idx + 1}. ${q.name}`} (Coming Soon)
+                      </span>
                     )}
                   </td>
                   <td className="td-companies">
@@ -77,7 +81,9 @@ const QuestionList = ({ questions, onSelectQuestion, solvedQuestions, onToggleSo
             <div key={idx} className={`question-card-mobile ${isSolved ? 'solved' : ''} ${!isGenerated ? 'is-locked' : ''}`} onClick={() => isGenerated && onSelectQuestion(q)}>
               <div className="card-top">
                 <span className={`difficulty-dot ${q.difficulty.toLowerCase()}`}></span>
-                <span className="card-name">{q.name} {!isGenerated && "(Locked)"}</span>
+                <span className="card-name">
+                  {q.name.match(/^Q\d+\./) ? q.name : `Q${idx + 1}. ${q.name}`} {!isGenerated && "(Locked)"}
+                </span>
                 <button 
                   className="card-status-toggle"
                   onClick={(e) => { e.stopPropagation(); isGenerated && onToggleSolved(qId); }}

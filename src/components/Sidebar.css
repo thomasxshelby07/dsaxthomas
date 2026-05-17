@@ -137,13 +137,21 @@
 
 .pattern-num {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  opacity: 0.5;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+  white-space: nowrap;
 }
 
 .pattern-btn.active .pattern-num {
+  background: rgba(88, 166, 255, 0.12);
   color: var(--blue);
-  opacity: 0.8;
+  border-color: rgba(88, 166, 255, 0.2);
 }
 
 .pattern-name {

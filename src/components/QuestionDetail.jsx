@@ -69,20 +69,6 @@ const QuestionDetail = ({ question, onBack }) => {
         </section>
       )}
 
-      {solutions.length > 1 && (
-        <div className="solution-tabs">
-          {solutions.map((sol, idx) => (
-            <button 
-              key={idx} 
-              className={`tab-btn ${activeTab === idx ? 'active' : ''}`}
-              onClick={() => setActiveTab(idx)}
-            >
-              {sol.type}
-            </button>
-          ))}
-        </div>
-      )}
-
       {question.testCases && question.testCases.length > 0 && (
         <section className="qd-section testcases-section">
           <h2 className="section-title">Example Test Cases</h2>
@@ -101,6 +87,20 @@ const QuestionDetail = ({ question, onBack }) => {
             ))}
           </div>
         </section>
+      )}
+
+      {solutions.length > 1 && (
+        <div className="solution-tabs">
+          {solutions.map((sol, idx) => (
+            <button 
+              key={idx} 
+              className={`tab-btn ${activeTab === idx ? 'active' : ''}`}
+              onClick={() => setActiveTab(idx)}
+            >
+              {sol.type}
+            </button>
+          ))}
+        </div>
       )}
 
       {currentSolution && (
