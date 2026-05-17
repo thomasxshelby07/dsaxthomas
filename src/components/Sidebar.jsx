@@ -49,7 +49,7 @@ const Sidebar = ({ patterns, selectedId, onSelect, onClose, domain, onDomainChan
       <nav className="sidebar-nav">
         <ul className="pattern-list">
           {patterns.map((p) => {
-            const isGenerated = domain === 'PYTHON' || p.id === '01' || p.id === '02' || p.id === '03';
+            const isGenerated = true;
             const isActive = selectedId === p.id;
 
             return (

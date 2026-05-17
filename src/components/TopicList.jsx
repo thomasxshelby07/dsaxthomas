@@ -7,7 +7,7 @@ const TopicList = ({ items, onSelect, domain }) => {
       <h2 className="topic-list-title">Select a {domain === 'DSA' ? 'Pattern' : 'Topic'} to Begin</h2>
       <div className="topic-grid">
         {items.map((item) => {
-          const isGenerated = domain === 'PYTHON' || item.id === '01' || item.id === '02' || item.id === '03';
+          const isGenerated = true;
           
           return (
             <button 
