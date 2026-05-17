@@ -132,9 +132,11 @@ export const patternsData = [
         name: "Q3. Merge Sorted Array", 
         companies: ["Amazon", "Microsoft", "Meta"], 
         link: "https://leetcode.com/problems/merge-sorted-array/",
-        problemStatement: "Two sorted arrays nums1 and nums2 diye hain. nums1 mein already m+n size ki jagah hai — pehle m elements real hain, baaki n slots 0 se filled hain. Hume dono ko merge karke sorted result nums1 mein hi store karna hai.",
+        problemStatement: "You are given two integer arrays nums1 and nums2, sorted in non-decreasing order. Merge both into a single sorted array stored inside nums1. The first m elements of nums1 are real, and the last n slots are 0 (just placeholders to be overwritten).",
         testCases: [
-          { input: "nums1 = [1,2,3,0,0,0], m=3, nums2 = [2,5,6], n=3", output: "[1,2,2,3,5,6]" }
+          { input: "nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3", output: "[1,2,2,3,5,6]" },
+          { input: "nums1 = [1], m = 1, nums2 = [], n = 0", output: "[1]" },
+          { input: "nums1 = [0], m = 0, nums2 = [1], n = 1", output: "[1]" }
         ],
         solutions: [
           {
@@ -148,7 +150,7 @@ export const patternsData = [
           },
           {
             type: "Optimal (Three Pointer)",
-            concept: "### Approach\nThe Trick — Fill from the Back! 🔑\nAgar hum front se fill karte toh nums1 ke elements overwrite ho jaate. Isliye hum end se shuru karte hain — sabse bada element pehle place karo at position m+n-1, phir peeche aate jao.\nThree pointers use karenge:\n• **p1** → nums1 ke last real element pe (m-1)\n• **p2** → nums2 ke last element pe (n-1)\n• **p** → nums1 ke last slot pe (m+n-1)\n\n### Algorithm\n* Set **p1 = m-1**, **p2 = n-1**, **p = m+n-1**\n* While **p1 >= 0** and **p2 >= 0**:\n  * Agar **nums1[p1] > nums2[p2]** → **nums1[p] = nums1[p1]**, **p1--**\n  * Warna → **nums1[p] = nums2[p2]**, **p2--**\n  * **p--**\n* Agar **p2 still remaining** → copy leftover **nums2** elements into **nums1**\n*(No need to handle leftover p1 — they're already in place!)*\n\n### Line-by-Line Explanation\n* \`p1 = m - 1\` → nums1 ka last real element\n* \`p2 = n - 1\` → nums2 ka last element\n* \`p = m + n - 1\` → nums1 ka last slot (yahan se fill karenge)\n* \`if nums1[p1] > nums2[p2]\` → Jo bada ho, usse pehle end mein rakh do\n* \`nums1[p] = nums1[p1]; p1 -= 1\` → nums1 wala element place kiya, pointer peeche lao\n* \`else: nums1[p] = nums2[p2]; p2 -= 1\` → nums2 wala element place kiya\n* \`p -= 1\` → Fill position ek peeche le jao\n* \`while p2 >= 0\` → Agar nums2 mein kuch bacha toh seedha copy kar do (ye elements already nums1 ke elements se chote hain)",
+            concept: "### Approach\nPeeche se bharo! 🔑\nFront se fill karte toh nums1 ke real elements overwrite ho jaate. Isliye hum end se start karte hain — sabse bada element pehle last slot mein daalo, phir aage badhte jao.\n\nTeen pointers use karenge:\n• **p1** → nums1 ka last real element (m-1)\n• **p2** → nums2 ka last element (n-1)\n• **p** → nums1 ka last slot (m+n-1)\n\n### Algorithm\n* Set **p1 = m-1**, **p2 = n-1**, **p = m+n-1**\n* Jab tak **p1 >= 0** aur **p2 >= 0**:\n  * Jo bada ho usse **nums1[p]** pe daalo, uska pointer peeche lao\n  * **p--**\n* Agar **p2 mein kuch bacha** → seedha nums1 mein copy karo\n\n### Line-by-Line Explanation\n* **p1 = m - 1** → nums1 ka last real element pe pointer\n* **p2 = n - 1** → nums2 ka last element pe pointer\n* **p = m + n - 1** → nums1 ka last slot — yahan se peeche ki taraf fill karenge\n* **if nums1[p1] > nums2[p2]** → Dono mein se jo bada hai usse pehle end mein rakh do\n* **nums1[p] = nums1[p1]; p1 -= 1** → nums1 wala element place kiya, pointer ek peeche\n* **else: nums1[p] = nums2[p2]; p2 -= 1** → nums2 wala element place kiya\n* **p -= 1** → Fill position ek aur peeche\n* **while p2 >= 0** → Agar nums2 mein kuch bacha toh copy kar lo — ye already nums1 ke remaining elements se chote hain",
             code: `class Solution:
     def merge(self, nums1: list[int], m: int, nums2: list[int], n: int) -> None:
         p1 = m - 1
@@ -168,16 +170,20 @@ export const patternsData = [
             nums1[p] = nums2[p2]
             p2 -= 1
             p -= 1`,
-            dryRun: [
-              "**Step 1: Write 6**<br>• **State:** p1=2 (3), p2=2 (6), p=5<br>• **Action:** Compare 3 vs 6. 6 is larger. Write 6 at nums1[5]. Decrement p2.<br>• **Result:** nums1=[1,2,3,0,0,6], p1=2, p2=1, p=4",
-              "**Step 2: Write 5**<br>• **State:** p1=2 (3), p2=1 (5), p=4<br>• **Action:** Compare 3 vs 5. 5 is larger. Write 5 at nums1[4]. Decrement p2.<br>• **Result:** nums1=[1,2,3,0,5,6], p1=2, p2=0, p=3",
-              "**Step 3: Write 3**<br>• **State:** p1=2 (3), p2=0 (2), p=3<br>• **Action:** Compare 3 vs 2. 3 is larger. Write 3 at nums1[3]. Decrement p1.<br>• **Result:** nums1=[1,2,3,3,5,6], p1=1, p2=0, p=2",
-              "**Step 4: Write 2 & Stop**<br>• **State:** p1=1 (2), p2=0 (2), p=2<br>• **Action:** Compare 2 vs 2. Write 2 at nums1[2]. Decrement p2 to -1.<br>• **Result:** nums1=[1,2,2,3,5,6], p1=1, p2=-1, p=1. p2 < 0. STOP.<br>• **Output:** [1,2,2,3,5,6] ✅"
-            ],
+            dryRunTable: {
+              headers: ["Step", "p1", "p2", "p", "Compare", "Action", "nums1"],
+              rows: [
+                ["1", "2 (val=3)", "2 (val=6)", "5", "3 vs 6", "place 6 at [5], p2--", "[1,2,3,0,0,6]"],
+                ["2", "2 (val=3)", "1 (val=5)", "4", "3 vs 5", "place 5 at [4], p2--", "[1,2,3,0,5,6]"],
+                ["3", "2 (val=3)", "0 (val=2)", "3", "3 vs 2", "place 3 at [3], p1--", "[1,2,3,3,5,6]"],
+                ["4", "1 (val=2)", "0 (val=2)", "2", "2 vs 2", "place 2 at [2], p2--", "[1,2,2,3,5,6]"],
+                ["5", "1", "-1", "1", "p2 < 0", "STOP", "[1,2,2,3,5,6]"]
+              ]
+            },
             complexity: "Time: O(m+n) — Har element exactly ek baar visit hota hai\nSpace: O(1) — Koi extra array nahi, sab in-place!"
           }
         ],
-        importantNotes: "• **nums2 empty hai n=0:** p2 = -1 start se, pehla loop hi nahi chalta, nums1 as-is rehta hai ✅\n• **nums1 empty hai m=0:** p1 = -1, sirf second while p2 >= 0 loop chalta hai, saara nums2 copy ho jaata hai ✅\n• **nums2 ke saare elements nums1 se bade hain:** p1 pehle exhaust hoga, phir bache hue nums2 elements copy ho jayenge ✅\n• **nums2 ke saare elements nums1 se chote hain:** p2 pehle exhaust hoga, nums1 wale elements apni jagah pe pehle se hain — kuch karna nahi ✅\n• **Negative numbers:** Comparison same tarah kaam karta hai, koi issue nahi ✅"
+        importantNotes: "• **nums2 empty n=0:** p2 = -1 start se hi, koi loop nahi chalta, nums1 as-is rehta hai ✅\n• **nums1 empty m=0:** Sirf second loop chalta hai, saara nums2 seedha copy ho jaata hai ✅\n• **nums2 ke saare elements bade hain:** p1 pehle khatam hoga, baaki nums2 copy ho jayega ✅\n• **nums2 ke saare elements chote hain:** p2 pehle khatam hoga, nums1 wale apni jagah pe already hain — kuch karna nahi ✅\n• **Negative numbers:** Comparison bilkul same kaam karta hai, koi dikkat nahi ✅"
       },
       { 
         isMastery: true, 

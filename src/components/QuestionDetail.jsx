@@ -116,7 +116,41 @@ const QuestionDetail = ({ question, onBack }) => {
             </section>
           )}
 
-          {currentSolution.dryRun && currentSolution.dryRun.length > 0 && (
+          {currentSolution.dryRunTable ? (
+            <section className="qd-section dryrun-section">
+              <h2 className="section-title">Step-by-Step Dry Run</h2>
+              <div className="dryrun-table-wrapper">
+                <table className="dryrun-table-view">
+                  <thead>
+                    <tr>
+                      {currentSolution.dryRunTable.headers.map((h, i) => (
+                        <th key={i}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentSolution.dryRunTable.rows.map((row, rIdx) => (
+                      <tr key={rIdx}>
+                        {row.map((cell, cIdx) => (
+                          <td key={cIdx}>
+                            {cell.trim().startsWith('[') && cell.trim().endsWith(']') ? (
+                              <div className="visual-array small">
+                                {cell.replace(/[\[\]]/g, '').split(',').map((item, idx) => (
+                                  <div key={idx} className="array-box mini">
+                                    {item.trim().replace(/['"]/g, '')}
+                                  </div>
+                                ))}
+                              </div>
+                            ) : parseMarkdown(cell)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          ) : currentSolution.dryRun && currentSolution.dryRun.length > 0 && (
             <section className="qd-section dryrun-section">
               <h2 className="section-title">Step-by-Step Dry Run</h2>
               <div className="dryrun-steps">

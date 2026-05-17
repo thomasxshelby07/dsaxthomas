@@ -542,4 +542,87 @@ pre[class*="language-"] {
   }
 }
 
+/* Premium Dry Run Table Styling */
+.dryrun-table-wrapper {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  background: rgba(13, 17, 23, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.dryrun-table-view {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.dryrun-table-view th {
+  background: rgba(30, 41, 59, 0.8);
+  color: var(--text-primary);
+  font-weight: 700;
+  padding: 1rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--border);
+}
+
+.dryrun-table-view td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+.dryrun-table-view tbody tr {
+  transition: all 0.2s ease;
+}
+
+.dryrun-table-view tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dryrun-table-view tbody tr:last-child {
+  background: rgba(37, 99, 235, 0.05);
+  border-bottom: none;
+}
+
+.dryrun-table-view tbody tr:last-child td {
+  color: var(--green);
+  font-weight: bold;
+}
+
+/* Micro-array in table */
+.visual-array.small {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.array-box.mini {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(88, 166, 255, 0.4);
+  color: var(--text-primary);
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.7rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.array-box.mini:hover {
+  background: var(--blue-dim);
+  color: white;
+  transform: scale(1.1);
+}
+
 
